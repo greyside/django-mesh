@@ -1,0 +1,8 @@
+{% extends "django_mesh/base.html" %}
+{% block content %}
+{% for object in object_list %}
+	<div><a href="{% url mesh_post_view object.slug %}">{{ object.title }}</a></div>
+{% empty %}
+	There are no posts to display.
+{% endfor %}
+{% endblock content %}
