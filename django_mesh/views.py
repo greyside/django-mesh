@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 def index(request):
 	return list_detail.object_list(
 		request,
-		queryset = Post.objects.all(),
+		queryset = Post.objects.active(),
 		template_name='django_mesh/index.html'
 	)
 
@@ -44,20 +44,20 @@ def channel_view(request, slug):
 	c = Channel.objects.get(slug=slug)
 	return list_detail.object_list(
 		request,
-		queryset = Post.objects.filter(channels=c),
+		queryset = Post.objects.active().filter(channels=c),
 		template_name='django_mesh/channel_view.html'
 	)
 
 def post_index(request):
 	return list_detail.object_list(
 		request,
-		queryset = Post.objects.all(),
+		queryset = Post.objects.active(),
 		template_name='django_mesh/index.html'
 	)
 
 def post_view(request, slug):
 	return list_detail.object_detail(
 		request,
-		Post.objects.all(),
+		Post.objects.active(),
 		slug=slug,
 		template_name='django_mesh/post_view.html')

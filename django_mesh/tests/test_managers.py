@@ -14,19 +14,18 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib import admin
-from models import *
+from ..models import *
+from util import BaseTestCase
 
-admin.site.register(Channel)
+class TestPostManager(BaseTestCase):
+	def test_active(self):
+		self.p1.save()
+		self.p2.save()
+		self.p3.save()
+		
+		active_posts = Post.objects.active()
+		
+		assert self.p1 in active_posts
+		assert self.p2 not in active_posts
+		assert self.p3 not in active_posts
 
-class ItemAdmin(admin.TabularInline):
-	model = Item
-	extra = 0
-
-class PostAdmin(admin.ModelAdmin):
-	prepopulated_fields = {"slug": ("title",)}
-	inlines = [ItemAdmin]
-
-admin.site.register(Post, PostAdmin)
-
-admin.site.register(Item)

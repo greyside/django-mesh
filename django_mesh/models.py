@@ -18,6 +18,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from datetime import datetime
+from managers import PostManager
 
 # Create your models here.
 
@@ -30,25 +31,31 @@ class Channel(models.Model):
 	name = models.CharField(max_length=140, unique=True)
 	site = models.ForeignKey(Site)
 	
-	#TODO: integrate with Sites framework
-	
 	class Meta:
 		ordering = ['name']
 		unique_together = (('slug', 'site'), ('name', 'site'))
 
 class Post(models.Model):
+	DRAFT_STATUS = 1
+	PUBLISHED_STATUS = 2
+	STATUS_CHOICES = (
+		(DRAFT_STATUS, 'Draft',),
+		(PUBLISHED_STATUS, 'Published',),
+	)
+	
 	author = models.ForeignKey(User)
-	#microblog compatible.
+	status = models.IntegerField(max_length=1, default=DRAFT_STATUS, choices=STATUS_CHOICES)
 	slug = models.SlugField(unique_for_date='published')
+	#microblog compatible.
 	title = models.CharField(max_length=140, unique_for_date='published')
 	text = models.TextField(default="")
-	items = models.ManyToManyField('Item', through='PostItem')
 	channels = models.ManyToManyField(Channel)
-	
 	
 	created = models.DateTimeField(auto_now_add=True, editable=False)
 	last_edited = models.DateTimeField(auto_now=True, editable=False)
 	published = models.DateTimeField(default=datetime.now())#TODO: default to now
+	
+	objects = PostManager()
 	
 	class Meta:
 		ordering = ['published']
@@ -63,18 +70,12 @@ class Item(models.Model):
 	#I think I'll just store title and url, and leave the rest to jquery-oembed.
 	#attachments can be handled by creating an oembed provider, or it could be faked.
 	#services: http://api.embed.ly/
+	post = models.ForeignKey(Post)
+	text = models.TextField(default="")
 	url = models.URLField(unique=True)
 	title = models.CharField(max_length=140)
-	added = models.DateTimeField(auto_now_add=True, editable=False)
-	
-	class Meta:
-		ordering = ['added']
-
-class PostItem(models.Model):
-	post = models.ForeignKey(Post)
-	item = models.ForeignKey(Item)
-	text = models.TextField(default="")
 	order = models.PositiveIntegerField()
 	
 	class Meta:
 		ordering = ['order']
+

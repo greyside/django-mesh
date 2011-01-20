@@ -15,4 +15,8 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
+from datetime import datetime
 
+class PostManager(models.Manager):
+	def active(self):
+		return self.filter(status=self.model.PUBLISHED_STATUS, published__lt=datetime.now())
