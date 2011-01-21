@@ -67,3 +67,12 @@ def post_view(request, slug):
 		template_name='django_mesh/post_view.html',
 		template_object_name='post'
 	)
+
+def post_comments(request, slug):
+	return list_detail.object_detail(
+		request,
+		Post.objects.active(),
+		slug=slug,
+		template_name='django_mesh/post_comments.html',
+		template_object_name='post'
+	)

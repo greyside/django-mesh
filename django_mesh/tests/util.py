@@ -18,14 +18,15 @@ from datetime import datetime, timedelta
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.contrib.comments.models import Comment
 from ..models import *
 from django.core.cache import cache
 
 class BaseTestCase(TestCase):
 	def setUp(self):
-		username = 'test_user'
-		password = 'foobar'
-		self.user = User.objects.create_user(username, 'test_user@example.com', password)
+		self.username = 'test_user'
+		self.password = 'foobar'
+		self.user = User.objects.create_user(self.username, 'test_user@example.com', self.password)
 		self.c1 = Channel(
 			slug='public',
 			name='Public',
@@ -64,6 +65,12 @@ class BaseTestCase(TestCase):
 			text='Another Really Awesome Site',
 			url='test.com',
 			title='Test.com Homepage',
+		)
+		self.comment1 = Comment(
+			site=Site.objects.get_current(),
+			user=self.user,
+			comment='Thanks for sharing.',
+		
 		)
 	
 	def tearDown(self):

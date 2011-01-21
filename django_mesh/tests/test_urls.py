@@ -16,6 +16,7 @@
 
 from util import BaseTestCase
 from django.core.urlresolvers import reverse
+import pdb
 
 class IndexTestCase(BaseTestCase):
 	
@@ -141,6 +142,8 @@ class PostTestCase(BaseTestCase):
 		self.p1.save()
 		self.i1.post = self.p1
 		self.i1.save()
+		self.comment1.content_object = self.p1
+		self.comment1.save()
 		self.p2.save()
 		self.i2.post = self.p2
 		self.i2.save()
@@ -150,7 +153,29 @@ class PostTestCase(BaseTestCase):
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, self.p1.title)
 		self.assertContains(response, self.i1.title)
+		self.assertContains(response, self.comment1.comment)
 		self.assertNotContains(response, self.p2.title)
 		self.assertNotContains(response, self.i2.title)
+	
+	def test_comments(self):
+		self.c1.save()
+		self.p1.save()
+		self.i1.post = self.p1
+		self.i1.save()
+		self.comment1.content_object = self.p1
+		self.comment1.save()
+		self.p2.save()
+		self.i2.post = self.p2
+		self.i2.save()
+		
+		response = self.client.get(reverse('mesh_post_comments', args=[self.p1.slug]))
+		
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, self.p1.title)
+		self.assertNotContains(response, self.i1.title)
+		self.assertContains(response, self.comment1.comment)
+		self.assertNotContains(response, self.p2.title)
+		self.assertNotContains(response, self.i2.title)
+	
 	
 	
