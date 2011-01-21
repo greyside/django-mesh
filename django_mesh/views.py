@@ -30,14 +30,16 @@ def index(request):
 	return list_detail.object_list(
 		request,
 		queryset = Post.objects.active(),
-		template_name='django_mesh/index.html'
+		template_name='django_mesh/index.html',
+		template_object_name='post'
 	)
 
 def channel_index(request):
 	return list_detail.object_list(
 		request,
 		queryset = Channel.objects.all(),
-		template_name='django_mesh/channel_index.html'
+		template_name='django_mesh/channel_index.html',
+		template_object_name='channel'
 	)
 
 def channel_view(request, slug):
@@ -45,14 +47,16 @@ def channel_view(request, slug):
 	return list_detail.object_list(
 		request,
 		queryset = Post.objects.active().filter(channels=c),
-		template_name='django_mesh/channel_view.html'
+		template_name='django_mesh/channel_view.html',
+		template_object_name='post'
 	)
 
 def post_index(request):
 	return list_detail.object_list(
 		request,
 		queryset = Post.objects.active(),
-		template_name='django_mesh/index.html'
+		template_name='django_mesh/post_index.html',
+		template_object_name='post'
 	)
 
 def post_view(request, slug):
@@ -60,4 +64,6 @@ def post_view(request, slug):
 		request,
 		Post.objects.active(),
 		slug=slug,
-		template_name='django_mesh/post_view.html')
+		template_name='django_mesh/post_view.html',
+		template_object_name='post'
+	)

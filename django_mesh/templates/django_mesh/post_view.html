@@ -1,9 +1,9 @@
 {% extends "django_mesh/base.html" %}
 {% block content %}
-<h2>{{ object.title }}</h2>
+<h2>{{ post.title }}</h2>
 <div class="post">
-	{{ object.text }}
-	{% for item in object.item_set.all %}
+	{{ post.text }}
+	{% for item in post.item_set.all %}
 	<div class="item">
 		{{ item.text }}<br />
 		<a href="{{ item.url }}" class="oembed">{{ item.title }}</a>
