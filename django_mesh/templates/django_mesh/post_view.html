@@ -15,6 +15,15 @@
 {% render_comment_form for post %}
 <p>{{ comment_count }} comments have been posted.</p>
 <div class="comment_list">
-	{% render_comment_list for post %}
+	{% get_comment_list for post as comment_list %}
+	{% for comment in comment_list|slice:":25" %}
+	<div>
+		<a name="comment_{{ comment.id }}"></a>
+		<p>{{ comment.comment }}</p>
+		<a href="{% get_comment_permalink comment %}">
+			permalink for comment #{{ forloop.counter }}
+		</a>
+	</div>
+	{% endfor %}
 </div>
 {% endblock content %}

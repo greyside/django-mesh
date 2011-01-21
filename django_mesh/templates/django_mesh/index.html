@@ -1,10 +1,13 @@
 {% extends "django_mesh/base.html" %}
+{% load pagination_tags %}
 {% block content %}
 <div class="post_list">
+{% autopaginate post_list 50 %}
 {% for post in post_list %}
 	<div><a href="{% url mesh_post_view post.slug %}">{{ post.title }}</a></div>
 {% empty %}
 	There are no posts to display.
 {% endfor %}
+{% paginate %}
 </div>
 {% endblock content %}
