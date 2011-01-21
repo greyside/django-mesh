@@ -139,10 +139,18 @@ class PostTestCase(BaseTestCase):
 	def test_view(self):
 		self.c1.save()
 		self.p1.save()
+		self.i1.post = self.p1
+		self.i1.save()
+		self.p2.save()
+		self.i2.post = self.p2
+		self.i2.save()
 		
 		response = self.client.get(reverse('mesh_post_view', args=[self.p1.slug]))
 		
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, self.p1.title)
+		self.assertContains(response, self.i1.title)
+		self.assertNotContains(response, self.p2.title)
+		self.assertNotContains(response, self.i2.title)
 	
 	

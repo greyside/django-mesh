@@ -1,8 +1,10 @@
 {% extends "django_mesh/base.html" %}
 {% block content %}
+<div class="channels">
 {% for object in object_list %}
-	<div><a href="{% url mesh_channel_view object.slug %}">{{ object.name }}</a></div>
+	<div class="chennel"><a href="{% url mesh_channel_view object.slug %}">{{ object.name }}</a></div>
 {% empty %}
 	There are no channels to display.
 {% endfor %}
+</div>
 {% endblock content %}

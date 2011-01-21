@@ -44,16 +44,26 @@ class BaseTestCase(TestCase):
 		)
 		self.p2 = Post(
 			author=self.user,
-			slug='tree-falls-forest-again',
-			title='Tree Falls in Forest, Could There be a Tree Flu Epidemic?',
+			slug='tree-falls-forest',
+			title='Tree Falls in Forest, No One Notices',
 			published=datetime.now()+timedelta(days=1),
 			status=Post.PUBLISHED_STATUS
 		)
 		self.p3 = Post(
 			author=self.user,
-			slug='tree-falls-forest',
-			title='Tree Falls in Forest, No One Notices',
+			slug='tree-falls-forest-again',
+			title='Tree Falls in Forest, Could There be a Tree Flu Epidemic?',
 			status=Post.DRAFT_STATUS
+		)
+		self.i1 = Item(
+			text='A Really Awesome Site',
+			url='example.com',
+			title='Example.com Homepage',
+		)
+		self.i2 = Item(
+			text='Another Really Awesome Site',
+			url='test.com',
+			title='Test.com Homepage',
 		)
 	
 	def tearDown(self):

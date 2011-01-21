@@ -74,7 +74,7 @@ class Item(models.Model):
 	text = models.TextField(default="")
 	url = models.URLField(unique=True)
 	title = models.CharField(max_length=140)
-	order = models.PositiveIntegerField()
+	order = models.PositiveIntegerField(default=0)
 	
 	class Meta:
 		ordering = ['order']
