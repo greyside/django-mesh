@@ -1,1 +1,6 @@
 Another Django blogging engine.
+
+Depends on:
+Django 1.2
+-auth, admin, sites, comments
+django-pagination

@@ -17,16 +17,32 @@
 from django.contrib import admin
 from models import *
 
-admin.site.register(Channel)
+class ChannelAdmin(admin.ModelAdmin):
+	prepopulated_fields = {"slug": ("name",)}
+admin.site.register(Channel, ChannelAdmin)
 
-class ItemAdmin(admin.TabularInline):
+class ItemInlineAdmin(admin.TabularInline):
 	model = Item
 	extra = 0
 
 class PostAdmin(admin.ModelAdmin):
 	prepopulated_fields = {"slug": ("title",)}
-	inlines = [ItemAdmin]
+	inlines = [ItemInlineAdmin]
+	list_editable = ['status']
+	list_display = ('title', 'author', 'status', 'last_edited', 'published',)
+	list_filter = ('author', 'status', 'channels', 'created', 'last_edited', 'published',)
+	readonly_fields = ('created', 'last_edited',)
+	search_fields = ['title', 'text']
+	
+	def formfield_for_foreignkey(self, db_field, request, **kwargs):
+		if db_field.name == 'author':
+			db_field.default = request.user
+		return super(PostAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(Post, PostAdmin)
 
-admin.site.register(Item)
+class ItemAdmin(admin.ModelAdmin):
+	list_display = ('title', 'post',)
+	search_fields = ['title', 'text']
+
+admin.site.register(Item, ItemAdmin)

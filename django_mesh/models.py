@@ -31,6 +31,9 @@ class Channel(models.Model):
 	name = models.CharField(max_length=140, unique=True)
 	site = models.ForeignKey(Site)
 	
+	def __unicode__(self):
+		return self.name
+	
 	class Meta:
 		ordering = ['name']
 		unique_together = (('slug', 'site'), ('name', 'site'))
@@ -57,6 +60,9 @@ class Post(models.Model):
 	
 	objects = PostManager()
 	
+	def __unicode__(self):
+		return self.title
+	
 	class Meta:
 		ordering = ['published']
 
@@ -75,6 +81,9 @@ class Item(models.Model):
 	url = models.URLField(unique=True)
 	title = models.CharField(max_length=140)
 	order = models.PositiveIntegerField(default=0)
+	
+	def __unicode__(self):
+		return self.title
 	
 	class Meta:
 		ordering = ['order']

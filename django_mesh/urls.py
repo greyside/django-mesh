@@ -18,7 +18,7 @@ from django.conf.urls.defaults import *
 
 # place app url patterns here
 urlpatterns = patterns('django_mesh.views',
-	url(r'^/$', 'index', name="mesh_index"),
+	url(r'^$', 'index', name="mesh_index"),
 	url(r'^channels/$', 'channel_index', name="mesh_channel_index"),
 	url(r'^channels/(.*)/$', 'channel_view', name="mesh_channel_view"),
 	url(r'^posts/$', 'post_index', name="mesh_post_index"),
