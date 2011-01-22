@@ -35,6 +35,7 @@ def index(request):
 	)
 
 def channel_index(request):
+	#FIXME: only show channels for this site
 	return list_detail.object_list(
 		request,
 		queryset = Channel.objects.all(),
