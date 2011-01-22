@@ -39,6 +39,8 @@ class Channel(models.Model):
 		unique_together = (('slug', 'site'), ('name', 'site'))
 
 class Post(models.Model):
+	SUMMARY_LENGTH = 50
+	
 	DRAFT_STATUS = 1
 	PUBLISHED_STATUS = 2
 	STATUS_CHOICES = (
@@ -52,11 +54,25 @@ class Post(models.Model):
 	#microblog compatible.
 	title = models.CharField(max_length=140, unique_for_date='published')
 	text = models.TextField(default="")
+	custom_summary = models.TextField(default="")
 	channels = models.ManyToManyField(Channel)
 	
 	created = models.DateTimeField(auto_now_add=True, editable=False)
 	last_edited = models.DateTimeField(auto_now=True, editable=False)
 	published = models.DateTimeField(default=datetime.now())#TODO: default to now
+	
+	def _get_teaser(self):
+		"A small excerpt of text that can be used in the absence of a custom summary."
+		return self.text[:Post.SUMMARY_LENGTH]
+	teaser = property(_get_teaser)
+	
+	def _get_summary(self):
+		"Returns custom_summary, or teaser if not available."
+		if len(self.custom_summary) > 0:
+			return self.custom_summary
+		else:
+			return self.teaser
+	summary = property(_get_summary)
 	
 	objects = PostManager()
 	

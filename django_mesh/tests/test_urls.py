@@ -44,7 +44,6 @@ class IndexTestCase(BaseTestCase):
 		self.assertContains(response, self.p1.title)
 		self.assertNotContains(response, self.p2.title)
 		self.assertNotContains(response, self.p3.title)
-	
 
 class ChannelTestCase(BaseTestCase):
 	

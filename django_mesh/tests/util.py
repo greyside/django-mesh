@@ -41,6 +41,7 @@ class BaseTestCase(TestCase):
 			author=self.user,
 			slug='unit-testing-unit-tests',
 			title='Are you unit testing your unit tests? Learn all about the latest best practice: TDTDD',
+			text='Lorem Ipsum etc.',
 			status=Post.PUBLISHED_STATUS
 		)
 		self.p2 = Post(
