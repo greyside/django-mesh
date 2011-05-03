@@ -24,12 +24,17 @@ from managers import PostManager
 
 #http://djangoadvent.com/1.2/object-permissions/
 
-#TODO: add comments
+#TODO: add pages (or use Flatpages), custom menus
+#Use http://code.google.com/p/django-trackback/
 
 class Channel(models.Model):
+	#TODO: add allowed authors, text descriptions
 	slug = models.SlugField()
 	name = models.CharField(max_length=140, unique=True)
 	site = models.ForeignKey(Site)
+	#TODO: add members (who can view the channel) and privacy types
+	#1. anyone can join, anyone can view
+	#2. added by owner, only members can view
 	
 	def __unicode__(self):
 		return self.name
@@ -56,10 +61,11 @@ class Post(models.Model):
 	text = models.TextField(default="")
 	custom_summary = models.TextField(default="")
 	channels = models.ManyToManyField(Channel)
+	#TODO: add tags
 	
 	created = models.DateTimeField(auto_now_add=True, editable=False)
 	last_edited = models.DateTimeField(auto_now=True, editable=False)
-	published = models.DateTimeField(default=datetime.now())#TODO: default to now
+	published = models.DateTimeField(default=datetime.now())#FIXME: should be set on save
 	
 	def _get_teaser(self):
 		"A small excerpt of text that can be used in the absence of a custom summary."

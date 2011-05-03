@@ -26,6 +26,7 @@ setup(name='django-mesh',
 	url='https://github.com/SeanHayes/django-mesh',
 	license='GPL',
 	packages=['django_mesh', 'django_mesh.tests',],
+	package_data={'django_mesh': ['fixtures/*', 'templates/*']},
 	install_requires=['Django>=1.2', 'django-pagination',],
 )
 
