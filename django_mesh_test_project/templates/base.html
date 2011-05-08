@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:og="http://opengraphprotocol.org/schema/" xmlns:fb="http://www.facebook.com/2008/fbml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>{% if current_site.name %}{{ current_site.name }} : {% endif %}{% block title %}{% endblock %}</title>
+	{% block extra_head %}{% endblock %}
+</head>
+<body>{% block body %}
+<div id="page">
+	<div id="header">
+	{% block header %}{% endblock header %}
+	</div>
+	<div id="content">
+	{% block content %}{% endblock content %}
+	</div>
+	<div id="footer">
+	{% block footer %}{% endblock footer %}
+	</div>
+</div>
+{% endblock body %}</body>
+</html>

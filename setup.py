@@ -28,5 +28,6 @@ setup(name='django-mesh',
 	packages=['django_mesh', 'django_mesh.tests',],
 	package_data={'django_mesh': ['fixtures/*', 'templates/*']},
 	install_requires=['Django>=1.2', 'django-pagination',],
+	test_suite = 'django_mesh_test_project.runtests.runtests',
 )
 
