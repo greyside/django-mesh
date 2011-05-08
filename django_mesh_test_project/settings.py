@@ -4,6 +4,9 @@ import os
 import django.conf.global_settings as DEFAULT_SETTINGS
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+PROJECT_PARENT_DIR = os.path.dirname(PROJECT_ROOT)
+
+PROJECT_MODULE = __name__[:__name__.rfind('.')] if '.' in __name__ else PROJECT_ROOT.split(os.sep)[-1]
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

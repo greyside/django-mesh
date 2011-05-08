@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import os, sys
-os.environ['DJANGO_SETTINGS_MODULE'] = 'django_mesh_test_project.settings'
-test_dir = os.path.dirname(__file__)
-sys.path.insert(0, test_dir)
-
+import settings
 from django.core.management import call_command
+
+os.environ['DJANGO_SETTINGS_MODULE'] = '%s.settings' % settings.PROJECT_MODULE
+sys.path.insert(0, settings.PROJECT_PARENT_DIR)
 
 def runtests():
 	call_command('test')

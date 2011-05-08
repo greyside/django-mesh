@@ -4,6 +4,8 @@
 from setuptools import setup
 import django_mesh
 
+package_name = 'django_mesh'
+
 setup(name='django-mesh',
 	version=django_mesh.__version__,
 	description="A Django blog.",
@@ -28,6 +30,6 @@ setup(name='django-mesh',
 	packages=['django_mesh', 'django_mesh.tests',],
 	package_data={'django_mesh': ['fixtures/*', 'templates/*']},
 	install_requires=['Django>=1.2', 'django-pagination',],
-	test_suite = 'django_mesh_test_project.runtests.runtests',
+	test_suite = '%s_test_project.runtests.runtests' % package_name,
 )
 
