@@ -1,2 +1,4 @@
 include django_mesh/templates/django_mesh/*
 include django_mesh_test_project/templates/*
+include LICENSE
+include README

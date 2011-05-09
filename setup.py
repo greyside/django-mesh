@@ -25,23 +25,15 @@ setup(name='django-mesh',
 		"Topic :: Software Development :: Libraries :: Python Modules"
 	],
 	keywords='django blog',
-	url='https://github.com/SeanHayes/django-mesh',
+	url='http://seanhayes.name/',
+	download_url='https://github.com/SeanHayes/django-mesh',
 	license='GPL',
 	packages=[
 		'django_mesh',
-		'django_mesh.tests',
 		'django_mesh_test_project',
 	],
-	package_data={
-		'django_mesh': [
-			'fixtures/*',
-			'templates/*',
-		],
-		'django_mesh_test_project': [
-			'templates/*',
-		],
-	},
-	install_requires=['Django>=1.2', 'django-pagination',],
+	include_package_data=True,
+	install_requires=['Django>=1.3', 'django-pagination',],
 	test_suite = '%s_test_project.runtests.runtests' % package_name,
 )
 
