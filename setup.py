@@ -5,6 +5,7 @@ from setuptools import setup
 import django_mesh
 
 package_name = 'django_mesh'
+test_package_name = '%s_test_project' % package_name
 
 setup(name='django-mesh',
 	version=django_mesh.__version__,
@@ -34,6 +35,6 @@ setup(name='django-mesh',
 	],
 	include_package_data=True,
 	install_requires=['Django>=1.3', 'django-pagination',],
-	test_suite = '%s_test_project.runtests.runtests' % package_name,
+	test_suite = '%s.runtests.runtests' % test_package_name,
 )
 

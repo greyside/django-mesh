@@ -14,18 +14,23 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import datetime
+import re
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-from datetime import datetime
+
 from managers import PostManager
 
 # Create your models here.
 
+oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
+
 #http://djangoadvent.com/1.2/object-permissions/
 
-#TODO: add pages (or use Flatpages), custom menus
-#Use http://code.google.com/p/django-trackback/
+#TODO: add pages, custom menus
+#TODO: Use http://code.google.com/p/django-trackback/
 
 class Channel(models.Model):
 	#TODO: add allowed authors, text descriptions
@@ -58,8 +63,9 @@ class Post(models.Model):
 	slug = models.SlugField(unique_for_date='published')
 	#microblog compatible.
 	title = models.CharField(max_length=140, unique_for_date='published')
-	text = models.TextField(default="")
-	custom_summary = models.TextField(default="")
+	text = models.TextField(default='')
+	rendered_text = models.TextField(default='')
+	custom_summary = models.TextField(default='')
 	channels = models.ManyToManyField(Channel)
 	#TODO: add tags
 	
@@ -82,31 +88,25 @@ class Post(models.Model):
 	
 	objects = PostManager()
 	
+	def get_oembed_markup(self, matchobj):
+		gd = matchobj.groupdict('')
+		
+		return '%(spacing)s<a href="%(url)s">%(url)s</a>' % gd
+	
+	def render(self):
+		#TODO: strip out dangerous HTML attributes, only allow basic formatting tags
+		
+		
+		self.rendered_text = oembed_regex.sub(self.get_oembed_markup, self.text)
+	
+	def save(self, *args, **kwargs):
+		if self.rendered_text == '':
+			self.render()
+		super(Post, self).save(*args, **kwargs)
+	
 	def __unicode__(self):
 		return self.title
 	
 	class Meta:
 		ordering = ['published']
-
-class Item(models.Model):
-	#http://www.oembed.com/
-	#needs to handle:
-	#links to web pages - show screenshot thumbnail
-	#oembed-able links - store JSON, render oembed data on request. store thumbnail if none is provided.
-	#attachments - generate thumbnail and store if possible, otherwise show generic icon. Embed player/viewer if possible, else give download link
-	
-	#I think I'll just store title and url, and leave the rest to jquery-oembed.
-	#attachments can be handled by creating an oembed provider, or it could be faked.
-	#services: http://api.embed.ly/
-	post = models.ForeignKey(Post)
-	text = models.TextField(default="")
-	url = models.URLField(unique=True)
-	title = models.CharField(max_length=140)
-	order = models.PositiveIntegerField(default=0)
-	
-	def __unicode__(self):
-		return self.title
-	
-	class Meta:
-		ordering = ['order']
 

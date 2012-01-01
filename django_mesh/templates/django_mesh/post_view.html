@@ -3,13 +3,7 @@
 {% block content %}
 <h2>{{ post.title }}</h2>
 <div class="post">
-	<p>{{ post.text }}</p>
-	{% for item in post.item_set.all %}
-	<div class="item">
-		<p>{{ item.text }}</p>
-		<a href="{{ item.url }}" class="oembed">{{ item.title }}</a>
-	</div>
-	{% endfor %}
+{{ post.rendered_text }}
 </div>
 {% get_comment_count for post as comment_count %}
 {% render_comment_form for post %}

@@ -24,8 +24,8 @@ class TestPost(BaseTestCase):
 		self.p1.channels.add(self.c1)
 		self.p1.save()
 		
-		assert self.p1.summary == self.p1.teaser
-		assert self.p1.summary != self.p1.custom_summary
+		self.assertEqual(self.p1.summary, self.p1.teaser)
+		self.assertNotEqual(self.p1.summary, self.p1.custom_summary)
 	
 	def test_has_custom_summary(self):
 		self.c1.save()
@@ -34,6 +34,31 @@ class TestPost(BaseTestCase):
 		self.p1.channels.add(self.c1)
 		self.p1.save()
 		
-		assert self.p1.summary != self.p1.teaser
-		assert self.p1.summary == self.p1.custom_summary
+		self.assertNotEqual(self.p1.summary, self.p1.teaser)
+		self.assertEqual(self.p1.summary, self.p1.custom_summary)
+	
+	def test_render_stays_the_same_when_no_links(self):
+		self.assertNotEqual(self.p1.text, '')
+		self.assertEqual(self.p1.rendered_text, '')
+		
+		self.p1.save()
+		
+		self.assertEqual(self.p1.rendered_text, self.p1.text)
+	
+	def test_render_adds_anchors(self):
+		self.p1.text = """foo
+ http://somelink
+	http://anotherlink
+"""
+		
+		self.assertEqual(self.p1.rendered_text, '')
+		
+		self.p1.save()
+		
+		self.assertEqual(self.p1.rendered_text, """foo
+ <a href="http://somelink">http://somelink</a>
+	<a href="http://anotherlink">http://anotherlink</a>
+""")
+		
+		
 

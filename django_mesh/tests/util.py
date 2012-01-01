@@ -15,15 +15,22 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime, timedelta
+import re
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.comments.models import Comment
-from ..models import *
 from django.core.cache import cache
+
+from .. import models
+from ..models import Channel, Post
 
 class BaseTestCase(TestCase):
 	def setUp(self):
+		self._old_oembed_regex = models.oembed_regex
+		models.oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
+		
 		self.username = 'test_user'
 		self.password = 'foobar'
 		self.user = User.objects.create_user(self.username, 'test_user@example.com', self.password)
@@ -57,16 +64,6 @@ class BaseTestCase(TestCase):
 			title='Tree Falls in Forest, Could There be a Tree Flu Epidemic?',
 			status=Post.DRAFT_STATUS
 		)
-		self.i1 = Item(
-			text='A Really Awesome Site',
-			url='example.com',
-			title='Example.com Homepage',
-		)
-		self.i2 = Item(
-			text='Another Really Awesome Site',
-			url='test.com',
-			title='Test.com Homepage',
-		)
 		self.comment1 = Comment(
 			site=Site.objects.get_current(),
 			user=self.user,
@@ -77,3 +74,5 @@ class BaseTestCase(TestCase):
 	def tearDown(self):
 		#FIXME: dqc doesn't intercept db destruction or rollback
 		cache.clear()
+		
+		models.oembed_regex = self._old_oembed_regex

@@ -14,6 +14,6 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-VERSION = (0, 1, 0)
+VERSION = (0, 2, 0, 'dev')
 
 __version__ = "".join([".".join(map(str, VERSION[0:3])), "".join(VERSION[3:])])
