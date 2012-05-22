@@ -38,15 +38,16 @@ class Channel(models.Model):
 	name = models.CharField(max_length=140, unique=True)
 	site = models.ForeignKey(Site)
 	#TODO: add members (who can view the channel) and privacy types
-	#1. anyone can join, anyone can view
-	#2. added by owner, only members can view
+	#membership: members self enroll or members added by owner
+	#view posts: anyone can view or only members can view
+	#channel hidden: only members will know of its existence
 	
 	def __unicode__(self):
 		return self.name
 	
 	class Meta:
 		ordering = ['name']
-		unique_together = (('slug', 'site'), ('name', 'site'))
+		unique_together = (('slug', 'site'), ('name', 'site'),)
 
 class Post(models.Model):
 	SUMMARY_LENGTH = 50

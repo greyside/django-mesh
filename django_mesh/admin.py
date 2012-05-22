@@ -21,13 +21,8 @@ class ChannelAdmin(admin.ModelAdmin):
 	prepopulated_fields = {"slug": ("name",)}
 admin.site.register(Channel, ChannelAdmin)
 
-class ItemInlineAdmin(admin.TabularInline):
-	model = Item
-	extra = 0
-
 class PostAdmin(admin.ModelAdmin):
 	prepopulated_fields = {"slug": ("title",)}
-	inlines = [ItemInlineAdmin]
 	list_editable = ['status']
 	list_display = ('title', 'author', 'status', 'last_edited', 'published',)
 	list_filter = ('author', 'status', 'channels', 'created', 'last_edited', 'published',)
@@ -41,8 +36,3 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(Post, PostAdmin)
 
-class ItemAdmin(admin.ModelAdmin):
-	list_display = ('title', 'post',)
-	search_fields = ['title', 'text']
-
-admin.site.register(Item, ItemAdmin)
