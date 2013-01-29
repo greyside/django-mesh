@@ -14,9 +14,9 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import *
+#Django imports
+from django.conf.urls import patterns, url
 
-# place app url patterns here
 urlpatterns = patterns('django_mesh.views',
 	url(r'^$', 'index', name="mesh_index"),
 	url(r'^channels/$', 'channel_index', name="mesh_channel_index"),

@@ -14,7 +14,7 @@
 	<div>
 		<a name="comment_{{ comment.id }}"></a>
 		<p>{{ comment.comment }}</p>
-		<a href="{% get_comment_permalink comment %}">
+		<a href="{% get_comment_permalink comment '#comment-%(id)s' %}">
 			permalink for comment #{{ forloop.counter }}
 		</a>
 	</div>
