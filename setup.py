@@ -34,7 +34,7 @@ setup(name='django-mesh',
 		'django_mesh_test_project',
 	],
 	include_package_data=True,
-	install_requires=['Django>=1.3', 'django-pagination',],
+	install_requires=['Django>=1.3', 'django-pagination', 'django-taggit',],
 	test_suite = '%s.runtests.runtests' % test_package_name,
 )
 

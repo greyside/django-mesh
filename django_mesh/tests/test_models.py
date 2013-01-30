@@ -14,14 +14,15 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..models import *
+#Test imports
 from util import BaseTestCase
 
 class TestPost(BaseTestCase):
 	def test_has_auto_summary(self):
 		self.c1.save()
-		self.p1.save()
-		self.p1.channels.add(self.c1)
+		self.p1.channel = self.c1 #############
+#		self.p1.save()
+#		self.p1.channel.add(self.c1)
 		self.p1.save()
 		
 		self.assertEqual(self.p1.summary, self.p1.teaser)
@@ -30,8 +31,9 @@ class TestPost(BaseTestCase):
 	def test_has_custom_summary(self):
 		self.c1.save()
 		self.p1.custom_summary = 'This is a summary.'
-		self.p1.save()
-		self.p1.channels.add(self.c1)
+		self.p1.channel = self.c1 #############
+#		self.p1.save()
+#		self.p1.channel.add(self.c1)
 		self.p1.save()
 		
 		self.assertNotEqual(self.p1.summary, self.p1.teaser)
@@ -41,6 +43,8 @@ class TestPost(BaseTestCase):
 		self.assertNotEqual(self.p1.text, '')
 		self.assertEqual(self.p1.rendered_text, '')
 		
+		self.c1.save() ############
+		self.p1.channel = self.c1 #############
 		self.p1.save()
 		
 		self.assertEqual(self.p1.rendered_text, self.p1.text)
@@ -53,12 +57,12 @@ class TestPost(BaseTestCase):
 		
 		self.assertEqual(self.p1.rendered_text, '')
 		
+		self.c1.save() ############
+		self.p1.channel = self.c1 #############
 		self.p1.save()
 		
 		self.assertEqual(self.p1.rendered_text, """foo
  <a href="http://somelink">http://somelink</a>
 	<a href="http://anotherlink">http://anotherlink</a>
 """)
-		
-		
 

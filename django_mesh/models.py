@@ -14,16 +14,21 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#Python imports
 from datetime import datetime
 import re
 
-from django.db import models
+#Django imports
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
+#from django.contrib.sitemaps import ping_google
+from django.core.urlresolvers import reverse
+from django.db import models
 
+#3d party imports
+from taggit.managers import TaggableManager
+
+#App imports
 from managers import PostManager
-
-# Create your models here.
 
 oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 
@@ -32,47 +37,49 @@ oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 #TODO: add pages, custom menus
 #TODO: Use http://code.google.com/p/django-trackback/
 
-class Channel(models.Model):
+class _Abstract(models.Model):
+	slug  = models.SlugField(unique=True)
+	#microblog compatible.
+	title = models.CharField(max_length=140, unique=True)
+	
+	def __unicode__(self):
+		return self.title
+		
+	class Meta:
+		abstract = True
+
+class Channel(_Abstract):
 	#TODO: add allowed authors, text descriptions
-	slug = models.SlugField()
-	name = models.CharField(max_length=140, unique=True)
-	site = models.ForeignKey(Site)
 	#TODO: add members (who can view the channel) and privacy types
 	#membership: members self enroll or members added by owner
 	#view posts: anyone can view or only members can view
 	#channel hidden: only members will know of its existence
 	
-	def __unicode__(self):
-		return self.name
-	
 	class Meta:
-		ordering = ['name']
-		unique_together = (('slug', 'site'), ('name', 'site'),)
+		ordering = ['title']
 
-class Post(models.Model):
+class Post(_Abstract):
 	SUMMARY_LENGTH = 50
 	
-	DRAFT_STATUS = 1
+	DRAFT_STATUS	 = 1
 	PUBLISHED_STATUS = 2
 	STATUS_CHOICES = (
-		(DRAFT_STATUS, 'Draft',),
+		(DRAFT_STATUS,	 'Draft',),
 		(PUBLISHED_STATUS, 'Published',),
 	)
 	
-	author = models.ForeignKey(User)
-	status = models.IntegerField(max_length=1, default=DRAFT_STATUS, choices=STATUS_CHOICES)
-	slug = models.SlugField(unique_for_date='published')
-	#microblog compatible.
-	title = models.CharField(max_length=140, unique_for_date='published')
-	text = models.TextField(default='')
-	rendered_text = models.TextField(default='')
+	author         = models.ForeignKey(User)
+	status         = models.IntegerField(max_length=1, default=DRAFT_STATUS, choices=STATUS_CHOICES)
+	text           = models.TextField(default='')						#move to abstract
+	rendered_text  = models.TextField(default='', blank=True)			#move to abstract
 	custom_summary = models.TextField(default='')
-	channels = models.ManyToManyField(Channel)
-	#TODO: add tags
+	channel        = models.ForeignKey(Channel)
+	created        = models.DateTimeField(auto_now_add=True, editable=False)
+	last_edited    = models.DateTimeField(auto_now=True, editable=False)
+	published      = models.DateTimeField(default=datetime.now())
 	
-	created = models.DateTimeField(auto_now_add=True, editable=False)
-	last_edited = models.DateTimeField(auto_now=True, editable=False)
-	published = models.DateTimeField(default=datetime.now())#FIXME: should be set on save
+	objects = PostManager()
+	tags    = TaggableManager()
 	
 	def _get_teaser(self):
 		"A small excerpt of text that can be used in the absence of a custom summary."
@@ -87,8 +94,6 @@ class Post(models.Model):
 			return self.teaser
 	summary = property(_get_summary)
 	
-	objects = PostManager()
-	
 	def get_oembed_markup(self, matchobj):
 		gd = matchobj.groupdict('')
 		
@@ -97,17 +102,25 @@ class Post(models.Model):
 	def render(self):
 		#TODO: strip out dangerous HTML attributes, only allow basic formatting tags
 		
-		
 		self.rendered_text = oembed_regex.sub(self.get_oembed_markup, self.text)
 	
 	def save(self, *args, **kwargs):
 		if self.rendered_text == '':
 			self.render()
 		super(Post, self).save(*args, **kwargs)
+#		try:
+#			ping_google()
+#		except Exception:
+#			# Bare 'except' because we could get a variety of HTTP-related exceptions.
+#			pass
 	
-	def __unicode__(self):
-		return self.title
+	def get_absolute_url(self):
+		return reverse('mesh_post_view', args=(self.slug,))
 	
 	class Meta:
 		ordering = ['published']
+		
+	#############
+#	def get_absolute_url(self):
+#		return "/django_mesh/posts???/%d" % self.id
 

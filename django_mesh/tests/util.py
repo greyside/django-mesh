@@ -14,15 +14,18 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#Python imports
 from datetime import datetime, timedelta
 import re
 
+#Django imports
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.contrib.comments.models import Comment
+from django.contrib.sites.models import Site
 from django.core.cache import cache
 
+#App imports
 from .. import models
 from ..models import Channel, Post
 
@@ -36,13 +39,11 @@ class BaseTestCase(TestCase):
 		self.user = User.objects.create_user(self.username, 'test_user@example.com', self.password)
 		self.c1 = Channel(
 			slug='public',
-			name='Public',
-			site=Site.objects.get_current()
+			title='Public',
 		)
 		self.c2 = Channel(
 			slug='another-channel',
-			name='Another Channel',
-			site=Site.objects.get_current()
+			title='Another Channel',
 		)
 		self.p1 = Post(
 			author=self.user,
@@ -76,3 +77,4 @@ class BaseTestCase(TestCase):
 		cache.clear()
 		
 		models.oembed_regex = self._old_oembed_regex
+

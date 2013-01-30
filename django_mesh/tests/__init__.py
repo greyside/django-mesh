@@ -14,9 +14,10 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from test_managers import *
-from test_models import *
-from test_urls import *
+#Test imports
+from test_managers import TestPostManager
+from test_models import TestPost
+from test_urls import IndexTestCase, ChannelTestCase, PostTestCase
 
 __test__ = {
 	'test_managers': [test_managers],

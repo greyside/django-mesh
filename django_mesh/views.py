@@ -14,31 +14,33 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.views.generic import list_detail
-from django.http import HttpResponseRedirect
-from django.template import RequestContext
-from django.core.urlresolvers import reverse
-from django.shortcuts import render_to_response
-from models import *
+#Python imports
 import logging
 
-logger = logging.getLogger(__name__)
+#Django imports
+from django.views.generic import list_detail
+#from django.http import HttpResponseRedirect
+#from django.template import RequestContext
+#from django.core.urlresolvers import reverse
+#from django.shortcuts import render_to_response
 
-# Create your views here.
+#App imports
+from models import Channel, Post
+
+logger = logging.getLogger(__name__)
 
 def index(request):
 	return list_detail.object_list(
 		request,
-		queryset = Post.objects.active(),
+		queryset=Post.objects.active(),
 		template_name='django_mesh/index.html',
 		template_object_name='post'
 	)
 
 def channel_index(request):
-	#FIXME: only show channels for this site
 	return list_detail.object_list(
 		request,
-		queryset = Channel.objects.all(),
+		queryset=Channel.objects.all(),
 		template_name='django_mesh/channel_index.html',
 		template_object_name='channel'
 	)
@@ -47,7 +49,7 @@ def channel_view(request, slug):
 	c = Channel.objects.get(slug=slug)
 	return list_detail.object_list(
 		request,
-		queryset = Post.objects.active().filter(channels=c),
+		queryset=Post.objects.active().filter(channel=c),
 		template_name='django_mesh/channel_view.html',
 		template_object_name='post'
 	)
@@ -55,7 +57,7 @@ def channel_view(request, slug):
 def post_index(request):
 	return list_detail.object_list(
 		request,
-		queryset = Post.objects.active(),
+		queryset=Post.objects.active(),
 		template_name='django_mesh/post_index.html',
 		template_object_name='post'
 	)

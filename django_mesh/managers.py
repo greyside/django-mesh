@@ -14,8 +14,11 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db import models
+#Python imports
 from datetime import datetime
+
+#Django imports
+from django.db import models
 
 class PostManager(models.Manager):
 	def active(self):

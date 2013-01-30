@@ -3,10 +3,10 @@
 import os
 import django.conf.global_settings as DEFAULT_SETTINGS
 
-PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-PROJECT_PARENT_DIR = os.path.dirname(PROJECT_ROOT)
+PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
+PACKAGE_PARENT_DIR = os.path.dirname(PACKAGE_ROOT)
 
-PROJECT_MODULE = __name__[:__name__.rfind('.')] if '.' in __name__ else PROJECT_ROOT.split(os.sep)[-1]
+PACKAGE_MODULE = __name__[:__name__.rfind('.')] if '.' in __name__ else PACKAGE_ROOT.split(os.sep)[-1]
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -19,12 +19,12 @@ MANAGERS = ADMINS
 
 DATABASES = {
 	'default': {
-		'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-		'NAME': '',					  # Or path to database file if using sqlite3.
-		'USER': '',					  # Not used with sqlite3.
-		'PASSWORD': '',				  # Not used with sqlite3.
-		'HOST': '',					  # Set to empty string for localhost. Not used with sqlite3.
-		'PORT': '',					  # Set to empty string for default. Not used with sqlite3.
+		'ENGINE': 'django.db.backends.sqlite3',		# Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+		'NAME': os.path.join(PACKAGE_ROOT, 'foo'),	# Or path to database file if using sqlite3.
+		'USER': '',									# Not used with sqlite3.
+		'PASSWORD': '',								# Not used with sqlite3.
+		'HOST': '',									# Set to empty string for localhost. Not used with sqlite3.
+		'PORT': '',									# Set to empty string for default. Not used with sqlite3.
 	}
 }
 
@@ -35,7 +35,7 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/New_York'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -115,7 +115,7 @@ TEMPLATE_DIRS = (
 	# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
 	# Always use forward slashes, even on Windows.
 	# Don't forget to use absolute paths, not relative paths.
-	os.path.join(PROJECT_ROOT, "templates"),
+	os.path.join(PACKAGE_ROOT, "templates"),
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
@@ -129,14 +129,13 @@ INSTALLED_APPS = (
 	'django.contrib.sites',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
-	# Uncomment the next line to enable the admin:
-	# 'django.contrib.admin',
-	# Uncomment the next line to enable admin documentation:
-	# 'django.contrib.admindocs',
-	
+	'django.contrib.admin',
+	'django.contrib.admindocs',
 	#dependencies
 	'django.contrib.comments',
+	'django.contrib.sitemaps',
 	'pagination',
+	'taggit',
 	#app that we want to test
 	'django_mesh',
 )

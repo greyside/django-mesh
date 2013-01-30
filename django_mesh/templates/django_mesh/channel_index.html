@@ -2,7 +2,9 @@
 {% block content %}
 <div class="channel_list">
 {% for channel in channel_list %}
-	<div><a href="{% url mesh_channel_view channel.slug %}">{{ channel.name }}</a></div>
+	<div>
+		<a href="{% url mesh_channel_view channel.slug %}">{{ channel.title }}</a>
+	</div>
 {% empty %}
 	There are no channels to display.
 {% endfor %}
