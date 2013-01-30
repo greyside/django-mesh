@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 #App imports
-#from ../django_mesh/models import Post   # wont work why?
+#from django_mesh.models import Post
 #from django.contrib.sitemaps import Sitemap
 
 #class MeshSitemap(Sitemap):

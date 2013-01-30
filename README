@@ -2,6 +2,6 @@ Another Django blogging engine.
 
 Depends on:
 Django 1.3
--auth, admin, sites, comments
+-auth, admin, comments
 django-pagination
 django-taggit

@@ -49,11 +49,14 @@ class _Abstract(models.Model):
 		abstract = True
 
 class Channel(_Abstract):
-	#TODO: add allowed authors, text descriptions
+	#TODO: add allowed authors
 	#TODO: add members (who can view the channel) and privacy types
 	#membership: members self enroll or members added by owner
-	#view posts: anyone can view or only members can view
-	#channel hidden: only members will know of its existence
+	#view content: anyone can view or only members can view
+	#channel will be considered hidden if users can't self enroll and only members can view content
+	
+	def get_absolute_url(self):
+		return reverse('mesh_channel_view', args=(self.slug,))
 	
 	class Meta:
 		ordering = ['title']
@@ -119,8 +122,4 @@ class Post(_Abstract):
 	
 	class Meta:
 		ordering = ['published']
-		
-	#############
-#	def get_absolute_url(self):
-#		return "/django_mesh/posts???/%d" % self.id
 
