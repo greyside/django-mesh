@@ -14,68 +14,52 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#Python imports
+# Python imports
 import logging
 
-#Django imports
-from django.views.generic import list_detail
-#from django.http import HttpResponseRedirect
-#from django.template import RequestContext
-#from django.core.urlresolvers import reverse
-#from django.shortcuts import render_to_response
+# Django imports
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
+from django.shortcuts import get_object_or_404
 
-#App imports
-from models import Channel, Post
+# App imports
+from .models import Channel, Post
 
 logger = logging.getLogger(__name__)
 
-def index(request):
-	return list_detail.object_list(
-		request,
-		queryset=Post.objects.active(),
-		template_name='django_mesh/index.html',
-		template_object_name='post'
-	)
+class IndexView(ListView):
+    queryset = Post.objects.active()
+    template_name = 'django_mesh/index.html'
+    context_object_name='post_list'
 
-def channel_index(request):
-	return list_detail.object_list(
-		request,
-		queryset=Channel.objects.all(),
-		template_name='django_mesh/channel_index.html',
-		template_object_name='channel'
-	)
+class ChannelIndexView(ListView):
+    model = Channel
+    template_name = 'django_mesh/channel_index.html'
+    context_object_name='channel_list'
 
-def channel_view(request, slug):
-	c = Channel.objects.get(slug=slug)
-	return list_detail.object_list(
-		request,
-		queryset=Post.objects.active().filter(channel=c),
-		template_name='django_mesh/channel_view.html',
-		template_object_name='post'
-	)
+class ChannelDetailView(ListView):
+    queryset = Post.objects.active()
+    template_name = 'django_mesh/channel_view.html'
+    context_object_name='post_list'
+    
+    def get_queryset(self, *args, **kwargs):
+        ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
+        
+        c = get_object_or_404(Channel, slug=self.kwargs['slug'])
+        
+        return ret.filter(channel=c)
 
-def post_index(request):
-	return list_detail.object_list(
-		request,
-		queryset=Post.objects.active(),
-		template_name='django_mesh/post_index.html',
-		template_object_name='post'
-	)
+class PostIndexView(ListView):
+    queryset = Post.objects.active()
+    template_name = 'django_mesh/post_index.html'
+    context_object_name='post_list'
 
-def post_view(request, slug):
-	return list_detail.object_detail(
-		request,
-		Post.objects.active(),
-		slug=slug,
-		template_name='django_mesh/post_view.html',
-		template_object_name='post'
-	)
+class PostDetailView(DetailView):
+    queryset = Post.objects.active()
+    template_name = 'django_mesh/post_view.html'
+    context_object_name='post'
 
-def post_comments(request, slug):
-	return list_detail.object_detail(
-		request,
-		Post.objects.active(),
-		slug=slug,
-		template_name='django_mesh/post_comments.html',
-		template_object_name='post'
-	)
+class PostCommentsView(DetailView):
+    queryset = Post.objects.active()
+    template_name = 'django_mesh/post_comments.html'
+    context_object_name='post'

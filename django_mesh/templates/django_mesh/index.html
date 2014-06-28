@@ -5,7 +5,7 @@
 {% autopaginate post_list 50 %}
 {% for post in post_list %}
 	<div>
-		<a href="{% url mesh_post_view post.slug %}">{{ post.title }}</a>
+		<a href="{% url 'mesh_post_view' slug=post.slug %}">{{ post.title }}</a>
 		<p class="summary">{{ post.summary }}</p>
 	</div>
 {% empty %}

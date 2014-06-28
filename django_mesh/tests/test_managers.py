@@ -14,25 +14,25 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#App imports
+# App imports
 from ..models import Post
 
-#Test imports
-from util import BaseTestCase
+# Test imports
+from .util import BaseTestCase
 
 class TestPostManager(BaseTestCase):
-	def test_active(self):
-		self.c1.save() ############
-		self.p1.channel = self.c1 #############
-		self.p1.save()
-		self.p2.channel = self.c1 #############
-		self.p2.save()
-		self.p3.channel = self.c1 #############
-		self.p3.save()
-		
-		active_posts = Post.objects.active()
-		
-		assert self.p1 in active_posts
-		assert self.p2 not in active_posts
-		assert self.p3 not in active_posts
+    def test_active(self):
+        self.c1.save() ############
+        self.p1.channel = self.c1 #############
+        self.p1.save()
+        self.p2.channel = self.c1 #############
+        self.p2.save()
+        self.p3.channel = self.c1 #############
+        self.p3.save()
+        
+        active_posts = Post.objects.active()
+        
+        assert self.p1 in active_posts
+        assert self.p2 not in active_posts
+        assert self.p3 not in active_posts
 

@@ -14,12 +14,10 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#Python imports
-from datetime import datetime
-
-#Django imports
+# Django imports
 from django.db import models
+from django.utils import timezone
 
 class PostManager(models.Manager):
-	def active(self):
-		return self.filter(status=self.model.PUBLISHED_STATUS, published__lt=datetime.now())
+    def active(self):
+        return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now())

@@ -17,11 +17,13 @@
 #Django imports
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('django_mesh.views',
-	url(r'^$', 'index', name="mesh_index"),
-	url(r'^channels/$', 'channel_index', name="mesh_channel_index"),
-	url(r'^channels/(.*)/$', 'channel_view', name="mesh_channel_view"),
-	url(r'^posts/$', 'post_index', name="mesh_post_index"),
-	url(r'^posts/(.*)/comments/$', 'post_comments', name="mesh_post_comments"),
-	url(r'^posts/(.*)/$', 'post_view', name="mesh_post_view"),
+from .views import IndexView, ChannelIndexView, ChannelDetailView, PostIndexView, PostDetailView, PostCommentsView
+
+urlpatterns = patterns('',
+    url(r'^$', IndexView.as_view(), name="mesh_index"),
+    url(r'^channels/$', ChannelIndexView.as_view(), name="mesh_channel_index"),
+    url(r'^channels/(?P<slug>.+)/$', ChannelDetailView.as_view(), name="mesh_channel_view"),
+    url(r'^posts/$', PostIndexView.as_view(), name="mesh_post_index"),
+    url(r'^posts/(?P<slug>.+)/comments/$', PostCommentsView.as_view(), name="mesh_post_comments"),
+    url(r'^posts/(?P<slug>.+)/$', PostDetailView.as_view(), name="mesh_post_view"),
 )
