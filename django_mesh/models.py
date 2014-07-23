@@ -18,7 +18,6 @@
 import re
 
 # Django imports
-from django.contrib.auth.models import User
 #from django.contrib.sitemaps import ping_google
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -50,14 +49,24 @@ class _Abstract(models.Model):
         abstract = True
 
 class Channel(_Abstract):
+    followers = models.ManyToManyField(settings.AUTH_USER_MODEL)
     #TODO: add allowed authors
     #TODO: add members (who can view the channel) and privacy types
-    #membership: members self enroll or members added by owner
-    #view content: anyone can view or only members can view
-    #channel will be considered hidden if users can't self enroll and only members can view content
+    # members self enroll or members added by owner
+    ENROLLMENTS = Choices(
+        (0, 'SELF', 'Self'),
+        (1, 'AUTHOR', 'Author'),
+    )
+    
+    enrollment = models.IntegerField(max_length=1, default=STATUSES.DRAFT, choices=ENROLLMENTS)
+    
+    public = models.BooleanField(default=True, help_text="If False, only followers will be able to see content.")
     
     def get_absolute_url(self):
         return reverse('mesh_channel_view', args=(self.slug,))
+    
+    def can_author(self, user):
+        return user in self.authors.all()
     
     class Meta:
         ordering = ['title']
@@ -70,14 +79,14 @@ class Post(_Abstract):
         (1, 'PUBLISHED', 'Published',),
     )
     
-    author         = models.ForeignKey(User)
+    channel        = models.ForeignKey(Channel)
+    author         = models.ForeignKey(settings.AUTH_USER_MODEL)
     status         = models.IntegerField(max_length=1, default=STATUSES.DRAFT, choices=STATUSES)
     text           = models.TextField(default='')                        #move to abstract
     rendered_text  = models.TextField(default='', blank=True)            #move to abstract
     custom_summary = models.TextField(default='')
-    channel        = models.ForeignKey(Channel)
     created        = models.DateTimeField(auto_now_add=True, editable=False)
-    last_edited    = models.DateTimeField(auto_now=True, editable=False)
+    modified       = models.DateTimeField(auto_now=True, editable=False)
     published      = models.DateTimeField(default=timezone.now())
     
     objects = PostManager()
