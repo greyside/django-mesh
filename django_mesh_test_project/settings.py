@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'taggit',
     #app that we want to test
     'django_mesh',
+    'south'
 )
 
 MIDDLEWARE_CLASSES = (
