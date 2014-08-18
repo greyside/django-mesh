@@ -22,6 +22,7 @@ import re
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
 
 # 3d party imports
 from model_utils import Choices
@@ -56,6 +57,11 @@ class Channel(_Abstract):
     ENROLLMENTS = Choices(
         (0, 'SELF', 'Self'),
         (1, 'AUTHOR', 'Author'),
+    )
+
+    STATUSES = Choices(
+        (0, 'DRAFT',     'Draft',),
+        (1, 'PUBLISHED', 'Published',),
     )
     
     enrollment = models.IntegerField(max_length=1, default=STATUSES.DRAFT, choices=ENROLLMENTS)
