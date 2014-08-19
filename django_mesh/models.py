@@ -17,12 +17,22 @@
 # Python imports
 import re
 
+##priority viewing private posts, after "follow" channel, they can see posts. just worry about letting admin add people to channel first, then we'll worry
+#about self enrollment later
+#first step is restrict all posts 
+#then add permission from admin who can view post
+
+
 # Django imports
 #from django.contrib.sitemaps import ping_google
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+
+#try for adding restricting access
+from django.shortcuts import redirect
+
 
 # 3d party imports
 from model_utils import Choices
@@ -70,6 +80,7 @@ class Channel(_Abstract):
     
     def get_absolute_url(self):
         return reverse('mesh_channel_view', args=(self.slug,))
+
     
     def can_author(self, user):
         return user in self.authors.all()
