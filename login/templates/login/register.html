@@ -14,8 +14,7 @@
         {% else %}
         Django Mesh says: <strong>register here!</strong><br />
 
-        <form id="user_form" method="post" action="/"
-                enctype="multipart/form-data">
+        <form id="user_form" method="post" action="/front/" enctype="multipart/form-data">
 
             {% csrf_token %}
 
@@ -28,5 +27,20 @@
             <input type="submit" name="submit" value="Register" />
         </form>
         {% endif %}
+
+	<h1> OR </h1>
+	 
+
+	<form id="login_form" method="post" action="/front/login/">
+            {% csrf_token %}
+            Username: <input type="text" name="username" value="" size="50" />
+            <br />
+            Password: <input type="password" name="password" value="" size="50" />
+            <br />
+
+            <input type="submit" value="submit" />
+        </form>
+	
+
     </body>
 </html>
