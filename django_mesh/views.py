@@ -22,6 +22,11 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 
+#try for restriction
+#from login.views import user_login
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
 # App imports
 from .models import Channel, Post
 
@@ -49,7 +54,21 @@ class ChannelDetailView(ListView):
         
         return ret.filter(channel=c)
 
+
 class PostIndexView(ListView):
+
+    logged_in = ()
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+         if not request.user.has_perms(self.logged_in):
+            messages.error( request,
+                            'You do not have the permission required to perform the '
+                            'requested operation.')
+            return redirect(settings.LOGIN_URL)
+         else:
+            return super(PostIndexView, self).dispatch(request, *args, **kwargs)
+
     queryset = Post.objects.active()
     template_name = 'django_mesh/post_index.html'
     context_object_name='post_list'

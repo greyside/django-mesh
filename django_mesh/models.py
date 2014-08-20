@@ -17,11 +17,6 @@
 # Python imports
 import re
 
-##priority viewing private posts, after "follow" channel, they can see posts. just worry about letting admin add people to channel first, then we'll worry
-#about self enrollment later
-#first step is restrict all posts 
-#then add permission from admin who can view post
-
 
 # Django imports
 #from django.contrib.sitemaps import ping_google
