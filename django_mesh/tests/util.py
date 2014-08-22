@@ -46,6 +46,33 @@ class BaseTestCase(TestCase):
             slug='another-channel',
             title='Another Channel',
         )
+        self.following_public = Channel(
+            slug='following-public',
+            title='following public',
+            public= True,
+
+        )
+
+        self.following_private = Channel(
+            slug='following-private',
+            title='Following private',
+            public= False,
+        )
+
+        self.not_following_public = Channel(
+            slug='not-following-public',
+            title='Not following public',
+            public= True,
+
+        )
+
+        self.not_following_private = Channel(
+            slug='not-following-private',
+            title='not following private',
+            public= False,
+
+        )
+
         self.p1 = Post(
             author=self.user,
             slug='unit-testing-unit-tests',

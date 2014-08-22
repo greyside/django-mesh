@@ -38,7 +38,7 @@ def user_login(request):
 		if user:
 			if user.is_active:
 				login(request, user)
-				return HttpResponseRedirect(reverse('mesh_index'))
+				return HttpResponseRedirect(reverse('mesh_channel_index'))
 			else:
 				return HttpResponse('we are sorry, but it seems like your account is inactive')
 		else:

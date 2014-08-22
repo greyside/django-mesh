@@ -15,7 +15,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # App imports
-from ..models import Post
+from ..models import Post, Channel
 
 # Test imports
 from .util import BaseTestCase
@@ -36,3 +36,23 @@ class TestPostManager(BaseTestCase):
         assert self.p2 not in active_posts
         assert self.p3 not in active_posts
 
+class TestChannelQuerySet(BaseTestCase):
+    def test_get_for_user(self):
+        user = self.user                            
+        user.save() 
+
+        self.following_public.save()                                
+        self.following_public.followers.add(user)    
+        
+        self.following_private.save()               
+        self.following_private.followers.add(user)
+
+        self.not_following_public.save()
+        self.not_following_private.save()
+
+        viewable = Channel.objects.get_for_user(user)
+        
+        assert self.following_public in viewable  
+        assert self.following_private in viewable
+        assert self.not_following_public in viewable
+        assert self.not_following_private not in viewable

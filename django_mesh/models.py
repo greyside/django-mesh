@@ -17,7 +17,6 @@
 # Python imports
 import re
 
-
 # Django imports
 #from django.contrib.sitemaps import ping_google
 from django.core.urlresolvers import reverse
@@ -25,16 +24,9 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 
-#try for adding restricting access
-from django.shortcuts import redirect
-from model_utils.managers import PassThroughManager
-##delete
-from login.views import user_login
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-
 # 3d party imports
 from model_utils import Choices
+from model_utils.managers import PassThroughManager
 from taggit.managers import TaggableManager
 
 # App imports
@@ -42,16 +34,11 @@ from .managers import PostManager, ChannelQuerySet
 
 oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 
-#http://djangoadvent.com/1.2/object-permissions/
-
-#TODO: add pages, custom menus
-#TODO: Use http://code.google.com/p/django-trackback/
-
 class _Abstract(models.Model):
-    slug  = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True)
     #microblog compatible.
     title = models.CharField(max_length=140, unique=True)
-    
+
     def __unicode__(self):
         return self.title
         
@@ -60,10 +47,7 @@ class _Abstract(models.Model):
 
 class Channel(_Abstract):
     followers = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    #TODO: add allowed authors
-    #TODO: add members (who can view the channel) and privacy types
-    # members self enroll or members added by owner
-
+    
     ENROLLMENTS = Choices(
         (0, 'SELF', 'Self'),
         (1, 'AUTHOR', 'Author'),
@@ -78,13 +62,11 @@ class Channel(_Abstract):
     def get_absolute_url(self):
         return reverse('mesh_channel_view', args=(self.slug,))
 
-    
     def can_author(self, user):
         return user in self.authors.all()
     
     class Meta:
         ordering = ['title']
-
 
 class Post(_Abstract):
     SUMMARY_LENGTH = 50
@@ -145,4 +127,3 @@ class Post(_Abstract):
     
     class Meta:
         ordering = ['published']
-
