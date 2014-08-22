@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'django_mesh',
     'south',
     'login',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -110,6 +111,12 @@ TEMPLATE_DIRS = (
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
 
 # weaker password hashing allows for faster tests
 PASSWORD_HASHERS = (

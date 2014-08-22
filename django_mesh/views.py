@@ -14,6 +14,11 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#######that queryset should be in the view, if !user, queryset = only public posts, 
+#else queryset = public posts + posts belonging to channels user is subscribed
+#to
+
+
 # Python imports
 import logging
 
@@ -24,8 +29,9 @@ from django.shortcuts import get_object_or_404
 
 #try for restriction
 #from login.views import user_login
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+# from django.contrib.auth.decorators import login_required
+# from django.utils.decorators import method_decorator
+
 
 # App imports
 from .models import Channel, Post
@@ -37,10 +43,50 @@ class IndexView(ListView):
     template_name = 'django_mesh/index.html'
     context_object_name='post_list'
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 class ChannelIndexView(ListView):
     model = Channel
     template_name = 'django_mesh/channel_index.html'
     context_object_name='channel_list'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(ChannelIndexView, self).get_queryset(*args, **kwargs)
+
+        return qs.get_for_user(self.request.user)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class ChannelDetailView(ListView):
     queryset = Post.objects.active()
@@ -56,19 +102,14 @@ class ChannelDetailView(ListView):
 
 
 class PostIndexView(ListView):
-
-    logged_in = ()
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-         if not request.user.has_perms(self.logged_in):
-            messages.error( request,
-                            'You do not have the permission required to perform the '
-                            'requested operation.')
-            return redirect(settings.LOGIN_URL)
-         else:
-            return super(PostIndexView, self).dispatch(request, *args, **kwargs)
-
+    # logged_in = ()
+    # @method_decorator(login_required)
+    # def dispatch(self, request, *args, **kwargs):
+    #     if not request.user.has_perms(self.logged_in):
+    #        messages.error( request, 'cant view ')
+    #        return redirect(settings.LOGIN_URL)
+    #     else:
+    #        return super(PostIndexView, self).dispatch(request, *args, **kwargs)
     queryset = Post.objects.active()
     template_name = 'django_mesh/post_index.html'
     context_object_name='post_list'
@@ -82,3 +123,5 @@ class PostCommentsView(DetailView):
     queryset = Post.objects.active()
     template_name = 'django_mesh/post_comments.html'
     context_object_name='post'
+
+    ##############################################################################Since queryset is defined at the class level, we'll have to override get_queryset

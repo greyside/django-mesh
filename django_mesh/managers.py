@@ -21,3 +21,20 @@ from django.utils import timezone
 class PostManager(models.Manager):
     def active(self):
         return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now())
+
+from django.db.models.query import QuerySet 
+from django.db.models import Q
+
+class ChannelQuerySet(QuerySet): 
+
+    def get_for_user(self, user):
+       
+        if user.id == None:
+            return self.filter(public=True)
+        else:
+            return self.filter(Q(public= True) | Q(followers= user))
+#     										user is getting passed into followers
+
+
+
+#queryset goes in here, still use passthrough manager in models

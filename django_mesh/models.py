@@ -27,14 +27,18 @@ from django.conf import settings
 
 #try for adding restricting access
 from django.shortcuts import redirect
-
+from model_utils.managers import PassThroughManager
+##delete
+from login.views import user_login
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 # 3d party imports
 from model_utils import Choices
 from taggit.managers import TaggableManager
 
 # App imports
-from .managers import PostManager
+from .managers import PostManager, ChannelQuerySet
 
 oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 
@@ -59,20 +63,18 @@ class Channel(_Abstract):
     #TODO: add allowed authors
     #TODO: add members (who can view the channel) and privacy types
     # members self enroll or members added by owner
+
     ENROLLMENTS = Choices(
         (0, 'SELF', 'Self'),
         (1, 'AUTHOR', 'Author'),
     )
-
-    STATUSES = Choices(
-        (0, 'DRAFT',     'Draft',),
-        (1, 'PUBLISHED', 'Published',),
-    )
     
-    enrollment = models.IntegerField(max_length=1, default=STATUSES.DRAFT, choices=ENROLLMENTS)
+    enrollment = models.IntegerField(max_length=1, default=ENROLLMENTS.SELF, choices=ENROLLMENTS)
     
     public = models.BooleanField(default=True, help_text="If False, only followers will be able to see content.")
     
+    objects = PassThroughManager.for_queryset_class(ChannelQuerySet)()
+
     def get_absolute_url(self):
         return reverse('mesh_channel_view', args=(self.slug,))
 
@@ -82,6 +84,7 @@ class Channel(_Abstract):
     
     class Meta:
         ordering = ['title']
+
 
 class Post(_Abstract):
     SUMMARY_LENGTH = 50
