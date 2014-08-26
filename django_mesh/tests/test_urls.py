@@ -24,8 +24,8 @@ class IndexViewTestCase(BaseTestCase):
     def test_empty(self):
         response = self.client.get(reverse('mesh_index'))
         
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "There are no posts to display.")
+        self.assertEqual(response.status_code, 404)
+        #self.assertContains(response, "There are no posts to display.")
     
     def test_has_only_active_posts(self):
         self.c1.save()
@@ -42,7 +42,9 @@ class IndexViewTestCase(BaseTestCase):
         self.assertContains(response, self.p1.title)
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
-
+from ..models import Post, Channel
+from ..managers import PostManager, ChannelQuerySet
+from model_utils.managers import PassThroughManager
 class ChannelIndexViewTestCase(BaseTestCase):
     def test_index_empty(self):
         response = self.client.get(reverse('mesh_channel_index'))
@@ -57,6 +59,47 @@ class ChannelIndexViewTestCase(BaseTestCase):
         
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.c1.title)
+    
+    def test_hidden_channel_shows_up_for_following_user_in_channel_index_views(self):
+        # user = self.user
+        # user.save() 
+        # user.login()
+        self.client.login(username='test_user', password='foobar')
+        user = self.user
+        user.save()
+        self.following_private_channel.save()               
+        self.following_private_channel.followers.add(user)
+        
+        response = self.client.get(reverse('mesh_channel_index'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Following')
+
+    def test_public_shows_up_for_following_user_logged_in(self):
+        self.client.login(username='test_user', password='foobar')
+        user = self.user
+        user.save()
+        self.following_public_channel.save()               
+        self.following_public_channel.followers.add(user)
+        response = self.client.get(reverse('mesh_channel_index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'following')
+
+
+    def test_public_channel_shows_up_not_logged_in(self):
+        self.following_public_channel.save()
+        response = self.client.get(reverse('mesh_channel_index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.following_public_channel.title)
+
+    def test_private_doesnt_show_up_not_logged_in(self):
+        self.not_following_private_channel.save()
+        response = self.client.get(reverse('mesh_channel_index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'no channels to display')
+
+
+
 
 class ChannelDetailViewTestCase(BaseTestCase):
     def test_view_empty(self):

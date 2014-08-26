@@ -53,14 +53,14 @@ class Channel(_Abstract):
         (1, 'AUTHOR', 'Author'),
     )
     
-    enrollment = models.IntegerField(max_length=1, default=ENROLLMENTS.SELF, choices=ENROLLMENTS)
+    enrollment = models.IntegerField(max_length = 1, default = ENROLLMENTS.SELF, choices = ENROLLMENTS)
     
-    public = models.BooleanField(default=True, help_text="If False, only followers will be able to see content.")
+    public = models.BooleanField(default = True, help_text = "If False, only followers will be able to see content.")
     
     objects = PassThroughManager.for_queryset_class(ChannelQuerySet)()
-
+    
     def get_absolute_url(self):
-        return reverse('mesh_channel_view', args=(self.slug,))
+        return reverse('mesh_channel_view', args = (self.slug,))
 
     def can_author(self, user):
         return user in self.authors.all()
@@ -76,27 +76,27 @@ class Post(_Abstract):
         (1, 'PUBLISHED', 'Published',),
     )
     
-    channel        = models.ForeignKey(Channel)
-    author         = models.ForeignKey(settings.AUTH_USER_MODEL)
-    status         = models.IntegerField(max_length=1, default=STATUSES.DRAFT, choices=STATUSES)
-    text           = models.TextField(default='')                        #move to abstract
-    rendered_text  = models.TextField(default='', blank=True)            #move to abstract
-    custom_summary = models.TextField(default='')
-    created        = models.DateTimeField(auto_now_add=True, editable=False)
-    modified       = models.DateTimeField(auto_now=True, editable=False)
-    published      = models.DateTimeField(default=timezone.now())
+    channel         = models.ForeignKey(Channel)
+    author          = models.ForeignKey(settings.AUTH_USER_MODEL)
+    status          = models.IntegerField(max_length=1, default=STATUSES.DRAFT, choices=STATUSES)
+    text            = models.TextField(default='')                        #move to abstract
+    rendered_text   = models.TextField(default='', blank=True)            #move to abstract
+    custom_summary  = models.TextField(default='')
+    created         = models.DateTimeField(auto_now_add=True, editable=False)
+    modified        = models.DateTimeField(auto_now=True, editable=False)
+    published       = models.DateTimeField(default=timezone.now())
     
-    objects = PostManager()
-    tags    = TaggableManager()
+    objects         = PostManager()
+    tags            = TaggableManager()
     
     def _get_teaser(self):
         "A small excerpt of text that can be used in the absence of a custom summary."
         return self.text[:Post.SUMMARY_LENGTH]
-    teaser = property(_get_teaser)
+    teaser  = property(_get_teaser)
     
     def _get_summary(self):
         "Returns custom_summary, or teaser if not available."
-        if len(self.custom_summary) > 0:
+        if len(self.custom_summary)> 0:
             return self.custom_summary
         else:
             return self.teaser
@@ -123,7 +123,7 @@ class Post(_Abstract):
 #            pass
     
     def get_absolute_url(self):
-        return reverse('mesh_post_view', args=(self.slug,))
+        return reverse('mesh_post_view', args = (self.slug,))
     
     class Meta:
         ordering = ['published']

@@ -22,12 +22,12 @@ from .util import BaseTestCase
 
 class TestPostManager(BaseTestCase):
     def test_active(self):
-        self.c1.save() ############
-        self.p1.channel = self.c1 #############
+        self.c1.save()
+        self.p1.channel = self.c1
         self.p1.save()
-        self.p2.channel = self.c1 #############
+        self.p2.channel = self.c1
         self.p2.save()
-        self.p3.channel = self.c1 #############
+        self.p3.channel = self.c1
         self.p3.save()
         
         active_posts = Post.objects.active()
@@ -38,21 +38,21 @@ class TestPostManager(BaseTestCase):
 
 class TestChannelQuerySet(BaseTestCase):
     def test_get_for_user(self):
-        user = self.user                            
+        user = self.user
         user.save() 
 
-        self.following_public.save()                                
-        self.following_public.followers.add(user)    
+        self.following_public_channel.save()
+        self.following_public_channel.followers.add(user)    
         
-        self.following_private.save()               
-        self.following_private.followers.add(user)
+        self.following_private_channel.save()               
+        self.following_private_channel.followers.add(user)
 
-        self.not_following_public.save()
-        self.not_following_private.save()
+        self.not_following_public_channel.save()
+        self.not_following_private_channel.save()
 
         viewable = Channel.objects.get_for_user(user)
         
-        assert self.following_public in viewable  
-        assert self.following_private in viewable
-        assert self.not_following_public in viewable
-        assert self.not_following_private not in viewable
+        assert self.following_public_channel in viewable  
+        assert self.following_private_channel in viewable
+        assert self.not_following_public_channel in viewable
+        assert self.not_following_private_channel not in viewable
