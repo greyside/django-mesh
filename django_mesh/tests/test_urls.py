@@ -59,53 +59,38 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.c1.title)
 
-    def test_hidden_channel_shows_up_for_following_user_in_channel_index_views(self):
-        self.client.login(username='test_user', password='foobar')
+    def test_what_channel_anony_sees(self):
 
-        user = self.user
-        user.save()
-
-        self.following_private_channel.save()               
-        self.following_private_channel.followers.add(user)
-
-        response = self.client.get(reverse('mesh_channel_index'))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Following')
-
-    def test_public_shows_up_for_following_user_logged_in(self):
-        self.client.login(username='test_user', password='foobar')
-
-        user = self.user
-        user.save()
-
-        self.following_public_channel.save()
-        self.following_public_channel.followers.add(user)
-
-        response = self.client.get(reverse('mesh_channel_index'))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'following')
-
-    def test_public_channel_shows_up_not_logged_in(self):
-        self.following_public_channel.save()
-
-        response = self.client.get(reverse('mesh_channel_index'))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.following_public_channel.title)
-
-    def test_private_doesnt_show_up_not_logged_in(self):
+        self.not_following_public_channel.save()
         self.not_following_private_channel.save()
 
         response = self.client.get(reverse('mesh_channel_index'))
-
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'no channels to display')
 
+        self.assertContains(response, self.not_following_public_channel.title)
+        assert self.not_following_private_channel.title not in response
 
-#to do: make tests shorter by saving channels, then doing tests, instead
-#of have a def for each case.
+    def test_what_user_sees(self):
+        self.client.login(username='test_user', password='foobar')
+        user = self.user
+        user.save()
+
+        self.not_following_public_channel.save()
+        self.not_following_private_channel.save()
+        self.following_public_channel.save()
+        self.following_private_channel.save()
+
+        self.following_public_channel.followers.add(user)
+        self.following_private_channel.followers.add(user)
+
+        response = self.client.get(reverse('mesh_channel_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.not_following_public_channel.title)
+        self.assertContains(response, self.following_public_channel.title)
+        self.assertContains(response, self.following_private_channel.title)
+
+        assert self.not_following_private_channel.title not in response
 
 class ChannelDetailViewTestCase(BaseTestCase):
     def test_view_empty(self):
