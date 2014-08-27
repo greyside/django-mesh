@@ -53,14 +53,14 @@ class Channel(_Abstract):
         (1, 'AUTHOR', 'Author'),
     )
 
-    enrollment = models.IntegerField(max_length = 1, default = ENROLLMENTS.SELF, choices = ENROLLMENTS)
+    enrollment = models.IntegerField(max_length=1, default=ENROLLMENTS.SELF, choices=ENROLLMENTS)
 
-    public = models.BooleanField(default = True, help_text = "If False, only followers will be able to see content.")
+    public = models.BooleanField(default=True, help_text="If False, only followers will be able to see content.")
 
     objects = PassThroughManager.for_queryset_class(ChannelQuerySet)()
 
     def get_absolute_url(self):
-        return reverse('mesh_channel_view', args = (self.slug,))
+        return reverse('mesh_channel_view', args=(self.slug,))
 
     def can_author(self, user):
         return user in self.authors.all()

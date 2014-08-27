@@ -37,16 +37,12 @@ class IndexViewTestCase(BaseTestCase):
         self.p3.channel = self.c1
         self.p3.save()
 
-        response = self.client.get(reverse('mesh_post_sindex'))
+        response = self.client.get(reverse('mesh_post_index'))
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
-
-from ..models import Post, Channel
-from ..managers import PostManager, ChannelQuerySet
-from model_utils.managers import PassThroughManager
 
 class ChannelIndexViewTestCase(BaseTestCase):
     def test_index_empty(self):

@@ -20,7 +20,7 @@ from django.utils import timezone
 
 class PostManager(models.Manager):
     def active(self):
-        return self.filter(status = self.model.STATUSES.PUBLISHED, published__lt = timezone.now())
+        return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now())
 
 
 from django.db.models.query import QuerySet 

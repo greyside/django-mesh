@@ -2,9 +2,12 @@
 {% load comments %}
 {% load pagination_tags %}
 {% block content %}
+
 <h2>{{ post.title }}</h2>
+
 {% get_comment_count for post as comment_count %}
 {% render_comment_form for post %}
+
 <p>{{ comment_count }} comments have been posted.</p>
 <div class="comment_list">
 	{% get_comment_list for post as comment_list %}

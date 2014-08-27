@@ -2,13 +2,6 @@
 {% load pagination_tags %}
 {% block content %}
 
-<!--{% if user.is_authenticated %}
-	<h1> hello {{ user.username }}!</h1>
-
-	{% else %}
-	<h1>not logged in so nothing should be here!!</h1>
-{% endif %} -->
-
 	<div class="post_list">
 	{% autopaginate post_list 50 %}
 	{% for post in post_list %}

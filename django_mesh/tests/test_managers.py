@@ -20,7 +20,7 @@ from ..models import Post, Channel
 # Test imports
 from .util import BaseTestCase
 
-class TestPostManager(BaseTestCase):
+class PostManagerTestCase(BaseTestCase):
     def test_active(self):
         self.c1.save()
         self.p1.channel = self.c1
@@ -36,7 +36,7 @@ class TestPostManager(BaseTestCase):
         assert self.p2 not in active_posts
         assert self.p3 not in active_posts
 
-class TestChannelQuerySet(BaseTestCase):
+class ChannelQuerySetTestCase(BaseTestCase):
     def test_get_for_user(self):
         user = self.user
         user.save() 
