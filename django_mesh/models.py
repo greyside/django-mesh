@@ -47,35 +47,35 @@ class _Abstract(models.Model):
 
 class Channel(_Abstract):
     followers = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    
+
     ENROLLMENTS = Choices(
         (0, 'SELF', 'Self'),
         (1, 'AUTHOR', 'Author'),
     )
-    
+
     enrollment = models.IntegerField(max_length = 1, default = ENROLLMENTS.SELF, choices = ENROLLMENTS)
-    
+
     public = models.BooleanField(default = True, help_text = "If False, only followers will be able to see content.")
-    
+
     objects = PassThroughManager.for_queryset_class(ChannelQuerySet)()
-    
+
     def get_absolute_url(self):
         return reverse('mesh_channel_view', args = (self.slug,))
 
     def can_author(self, user):
         return user in self.authors.all()
-    
+
     class Meta:
         ordering = ['title']
 
 class Post(_Abstract):
     SUMMARY_LENGTH = 50
-    
+
     STATUSES = Choices(
         (0, 'DRAFT',     'Draft',),
         (1, 'PUBLISHED', 'Published',),
     )
-    
+
     channel         = models.ForeignKey(Channel)
     author          = models.ForeignKey(settings.AUTH_USER_MODEL)
     status          = models.IntegerField(max_length=1, default=STATUSES.DRAFT, choices=STATUSES)
@@ -85,45 +85,45 @@ class Post(_Abstract):
     created         = models.DateTimeField(auto_now_add=True, editable=False)
     modified        = models.DateTimeField(auto_now=True, editable=False)
     published       = models.DateTimeField(default=timezone.now())
-    
+
     objects         = PostManager()
     tags            = TaggableManager()
-    
+
     def _get_teaser(self):
         "A small excerpt of text that can be used in the absence of a custom summary."
         return self.text[:Post.SUMMARY_LENGTH]
-    teaser  = property(_get_teaser)
-    
+
+    teaser = property(_get_teaser)
+
     def _get_summary(self):
         "Returns custom_summary, or teaser if not available."
         if len(self.custom_summary)> 0:
             return self.custom_summary
         else:
             return self.teaser
+
     summary = property(_get_summary)
-    
+
     def get_oembed_markup(self, matchobj):
         gd = matchobj.groupdict('')
-        
         return '%(spacing)s<a href="%(url)s">%(url)s</a>' % gd
-    
+
     def render(self):
         #TODO: strip out dangerous HTML attributes, only allow basic formatting tags
-        
         self.rendered_text = oembed_regex.sub(self.get_oembed_markup, self.text)
-    
+
     def save(self, *args, **kwargs):
         if self.rendered_text == '':
             self.render()
+
         super(Post, self).save(*args, **kwargs)
 #        try:
 #            ping_google()
 #        except Exception:
 #            # Bare 'except' because we could get a variety of HTTP-related exceptions.
 #            pass
-    
     def get_absolute_url(self):
         return reverse('mesh_post_view', args = (self.slug,))
-    
+
     class Meta:
         ordering = ['published']

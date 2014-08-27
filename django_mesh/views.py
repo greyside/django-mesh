@@ -30,14 +30,14 @@ from django.db import models
 logger = logging.getLogger(__name__)
 
 class IndexView(ListView):
-    queryset = Post.objects.active()
-    template_name = 'django_mesh/index.html'
-    context_object_name = 'post_list'
+    model = Channel
+    template_name = 'django_mesh/channel_index.html'
+    context_object_name = 'channel_list'
 
     def get_queryset(self, *args, **kwargs):
-        ret = super(IndexView, self).get_queryset(*args, **kwargs)
-        c = get_object_or_404(Channel.objects.get_for_user(user = self.request.user))
-        return ret.filter(channel = c)
+        qs = super(IndexView, self).get_queryset(*args, **kwargs)
+        ret = qs.get_for_user(self.request.user)
+        return ret
 
 class ChannelIndexView(ListView):
     model = Channel
@@ -46,7 +46,7 @@ class ChannelIndexView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         qs = super(ChannelIndexView, self).get_queryset(*args, **kwargs)
-        ret= qs.get_for_user(self.request.user)
+        ret = qs.get_for_user(self.request.user)
         return ret
 
 class ChannelDetailView(ListView):
@@ -56,28 +56,30 @@ class ChannelDetailView(ListView):
     
     def get_queryset(self, *args, **kwargs):
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
-        c = get_object_or_404(Channel.objects.get_for_user(user = self.request.user), slug  = self.kwargs['slug'])
-        return ret.filter(channel = c)
+        c = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+        return ret.filter(channel=c)
 
 class PostIndexView(ListView):
     queryset = Post.objects.active()
     template_name = 'django_mesh/post_index.html'
     context_object_name = 'post_list'
+
     def get_queryset(self, *args, **kwargs):
         ret = super(PostIndexView, self).get_queryset(*args, **kwargs)
-        c = Channel.objects.get_for_user(user = self.request.user)
-        #c = get_object_or_404(Channel.objects.get_for_user(user = self.request.user))
-        return ret.filter(channel = c)
+        c = Channel.objects.get_for_user(user=self.request.user)
+        return ret.filter(channel=c)
 
 from .managers import PostManager
+
 class PostDetailView(DetailView):
     queryset = Post.objects.active()
     template_name = 'django_mesh/post_view.html'
-    context_object_name='post'
+    context_object_name = 'post'
+
     def get_queryset(self, *args, **kwargs):
         ret = super(PostDetailView, self).get_queryset(*args, **kwargs)
         c = Channel.objects.get_for_user(user = self.request.user)
-        return ret.filter(channel = c)
+        return ret.filter(channel=c)
 
 
 

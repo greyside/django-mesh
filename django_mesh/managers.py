@@ -26,11 +26,11 @@ class PostManager(models.Manager):
 from django.db.models.query import QuerySet 
 from django.db.models import Q
 
-class ChannelQuerySet(QuerySet): 
+class ChannelQuerySet(QuerySet):
     def get_for_user(self, user):
         if user.id == None:
-            return self.filter(public = True)
+            return self.filter(public=True)
         else:
-            return self.filter(Q(public = True) | Q(followers = user))
+            return self.filter(Q(public=True) | Q(followers=user))
 
 

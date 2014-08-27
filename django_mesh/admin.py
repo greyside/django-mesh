@@ -28,9 +28,6 @@ admin.site.register(Channel, ChannelAdmin)
 class PostAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     list_editable = ['status']
-    #list_display = ('title', 'author', 'status', 'last_edited', 'published',)
-    #list_filter = ('author', 'status', 'channel', 'created', 'last_edited', 'published',)
-    #readonly_fields = ['created', 'last_edited',]
     list_display = ('title', 'author', 'status', 'modified', 'published',)
     list_filter = ('author', 'status', 'channel', 'created', 'modified', 'published',)
     readonly_fields = ['created', 'modified',]

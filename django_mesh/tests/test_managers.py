@@ -48,6 +48,7 @@ class TestChannelQuerySet(BaseTestCase):
         self.following_private_channel.followers.add(user)
 
         self.not_following_public_channel.save()
+
         self.not_following_private_channel.save()
 
         viewable = Channel.objects.get_for_user(user)
