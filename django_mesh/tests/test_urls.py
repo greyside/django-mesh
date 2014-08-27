@@ -26,7 +26,7 @@ class IndexViewTestCase(BaseTestCase):
         response = self.client.get(reverse('mesh_index'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "There are no channels to display.")
+        self.assertContains(response, "There are no posts to display.")
 
     def test_has_only_active_posts(self):
         self.c1.save()
@@ -63,12 +63,17 @@ class ChannelIndexViewTestCase(BaseTestCase):
 
         self.not_following_public_channel.save()
         self.not_following_private_channel.save()
+        self.following_public_channel.save()
+        self.following_private_channel.save()
 
         response = self.client.get(reverse('mesh_channel_index'))
         self.assertEqual(response.status_code, 200)
 
         self.assertContains(response, self.not_following_public_channel.title)
+        self.assertContains(response, self.following_public_channel.title)
+        
         assert self.not_following_private_channel.title not in response
+        assert self.following_private_channel.title not in response
 
     def test_what_user_sees(self):
         self.client.login(username='test_user', password='foobar')

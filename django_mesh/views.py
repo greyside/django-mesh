@@ -30,14 +30,14 @@ from django.db import models
 logger = logging.getLogger(__name__)
 
 class IndexView(ListView):
-    model = Channel
-    template_name = 'django_mesh/channel_index.html'
-    context_object_name = 'channel_list'
+    queryset = Post.objects.active()
+    template_name = 'django_mesh/index.html'
+    context_object_name = 'post_list'
 
     def get_queryset(self, *args, **kwargs):
-        qs = super(IndexView, self).get_queryset(*args, **kwargs)
-        ret = qs.get_for_user(self.request.user)
-        return ret
+        ret = super(IndexView, self).get_queryset(*args, **kwargs)
+        c = Channel.objects.get_for_user(user=self.request.user)
+        return ret.filter(channel=c)
 
 class ChannelIndexView(ListView):
     model = Channel
@@ -80,8 +80,6 @@ class PostDetailView(DetailView):
         ret = super(PostDetailView, self).get_queryset(*args, **kwargs)
         c = Channel.objects.get_for_user(user=self.request.user)
         return ret.filter(channel=c)
-
-
 
 class PostCommentsView(DetailView):
     queryset = Post.objects.active()

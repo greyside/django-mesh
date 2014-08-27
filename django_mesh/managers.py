@@ -18,10 +18,13 @@
 from django.db import models
 from django.utils import timezone
 
+# To Do:
+# change postmanager method to queryset
+# filter by user-accessible channels 'behind the scenes'
+
 class PostManager(models.Manager):
     def active(self):
         return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now())
-
 
 from django.db.models.query import QuerySet 
 from django.db.models import Q
