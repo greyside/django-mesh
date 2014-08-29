@@ -30,7 +30,7 @@ from model_utils.managers import PassThroughManager
 from taggit.managers import TaggableManager
 
 # App imports
-from .managers import PostManager, ChannelQuerySet
+from .managers import PostQuerySet, ChannelQuerySet
 
 oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 
@@ -68,6 +68,7 @@ class Channel(_Abstract):
     class Meta:
         ordering = ['title']
 
+
 class Post(_Abstract):
     SUMMARY_LENGTH = 50
 
@@ -86,7 +87,7 @@ class Post(_Abstract):
     modified        = models.DateTimeField(auto_now=True, editable=False)
     published       = models.DateTimeField(default=timezone.now())
 
-    objects         = PostManager()
+    objects = PassThroughManager.for_queryset_class(PostQuerySet)()
     tags            = TaggableManager()
 
     def _get_teaser(self):
@@ -97,7 +98,7 @@ class Post(_Abstract):
 
     def _get_summary(self):
         "Returns custom_summary, or teaser if not available."
-        if len(self.custom_summary)> 0:
+        if len(self.custom_summary) > 0:
             return self.custom_summary
         else:
             return self.teaser

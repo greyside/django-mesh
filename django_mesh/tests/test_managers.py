@@ -20,7 +20,7 @@ from ..models import Post, Channel
 # Test imports
 from .util import BaseTestCase
 
-class PostManagerTestCase(BaseTestCase):
+class PostQuerySetTestCase(BaseTestCase):
     def test_active(self):
         self.c1.save()
         self.p1.channel = self.c1
@@ -29,7 +29,7 @@ class PostManagerTestCase(BaseTestCase):
         self.p2.save()
         self.p3.channel = self.c1
         self.p3.save()
-        
+
         active_posts = Post.objects.active()
         
         assert self.p1 in active_posts

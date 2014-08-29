@@ -21,23 +21,21 @@ import logging
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
-
+from django.db.models import Q
 # App imports
 from .models import Channel, Post
-
-from django.db import models
 
 logger = logging.getLogger(__name__)
 
 class IndexView(ListView):
-    queryset = Post.objects.active()
+    model = Post
     template_name = 'django_mesh/index.html'
     context_object_name = 'post_list'
 
     def get_queryset(self, *args, **kwargs):
         ret = super(IndexView, self).get_queryset(*args, **kwargs)
         c = Channel.objects.get_for_user(user=self.request.user)
-        return ret.filter(channel=c)
+        return ret.filter(channel=c).active()
 
 class ChannelIndexView(ListView):
     model = Channel
@@ -50,38 +48,36 @@ class ChannelIndexView(ListView):
         return ret
 
 class ChannelDetailView(ListView):
-    queryset = Post.objects.active()
+    model = Post
     template_name = 'django_mesh/channel_view.html'
     context_object_name = 'post_list'
     
     def get_queryset(self, *args, **kwargs):
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
         c = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
-        return ret.filter(channel=c)
+        return ret.filter(channel=c).active()
 
 class PostIndexView(ListView):
-    queryset = Post.objects.active()
+    model = Post
     template_name = 'django_mesh/post_index.html'
     context_object_name = 'post_list'
 
     def get_queryset(self, *args, **kwargs):
         ret = super(PostIndexView, self).get_queryset(*args, **kwargs)
         c = Channel.objects.get_for_user(user=self.request.user)
-        return ret.filter(channel=c)
-
-from .managers import PostManager
+        return ret.filter(channel=c).active()
 
 class PostDetailView(DetailView):
-    queryset = Post.objects.active()
+    model = Post
     template_name = 'django_mesh/post_view.html'
     context_object_name = 'post'
 
     def get_queryset(self, *args, **kwargs):
         ret = super(PostDetailView, self).get_queryset(*args, **kwargs)
         c = Channel.objects.get_for_user(user=self.request.user)
-        return ret.filter(channel=c)
+        return ret.filter(channel=c).active()
 
 class PostCommentsView(DetailView):
-    queryset = Post.objects.active()
+    model = Post
     template_name = 'django_mesh/post_comments.html'
     context_object_name = 'post'

@@ -71,9 +71,10 @@ class ChannelIndexViewTestCase(BaseTestCase):
 
         self.assertContains(response, self.not_following_public_channel.title)
         self.assertContains(response, self.following_public_channel.title)
-        
-        assert self.not_following_private_channel.title not in response
-        assert self.following_private_channel.title not in response
+
+        self.assertNotContains(response, self.not_following_private_channel.title)
+        self.assertNotContains(response, self.following_private_channel.title)
+
 
     def test_what_user_sees(self):
         self.client.login(username='test_user', password='foobar')
@@ -94,8 +95,8 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.assertContains(response, self.not_following_public_channel.title)
         self.assertContains(response, self.following_public_channel.title)
         self.assertContains(response, self.following_private_channel.title)
+        self.assertNotContains(response, self.not_following_private_channel.title)
 
-        assert self.not_following_private_channel.title not in response
 
 class ChannelDetailViewTestCase(BaseTestCase):
     def test_view_empty(self):
@@ -136,6 +137,7 @@ class ChannelDetailViewTestCase(BaseTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
+
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
 
@@ -161,6 +163,7 @@ class PostIndexViewTestCase(BaseTestCase):
         self.assertContains(response, self.p1.title)
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
+
 
 class PostDetailViewTestCase(BaseTestCase):
     def test_post_view(self):
