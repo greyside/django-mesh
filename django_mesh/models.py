@@ -34,10 +34,30 @@ from .managers import PostQuerySet, ChannelQuerySet
 
 oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 
-class _Abstract(models.Model):
+class _Abstract(models.Model):     #microblog compatible.
     slug = models.SlugField(unique=True)
-    #microblog compatible.
     title = models.CharField(max_length=140, unique=True)
+    text = models.TextField(default='')
+    rendered_text = models.TextField(default='', blank=True)
+
+    def get_oembed_markup(self, matchobj):
+        gd = matchobj.groupdict('')
+        return '%(spacing)s<a href="%(url)s">%(url)s</a>' % gd
+
+    def render(self):
+        #TODO: strip out dangerous HTML attributes, only allow basic formatting tags
+        self.rendered_text = oembed_regex.sub(self.get_oembed_markup, self.text)
+
+    def save(self, *args, **kwargs):
+        if self.rendered_text == '':
+            self.render()
+
+        super(_Abstract, self).save(*args, **kwargs)
+#        try:
+#            ping_google()
+#        except Exception:
+#            # Bare 'except' because we could get a variety of HTTP-related exceptions.
+#            pass
 
     def __unicode__(self):
         return self.title
@@ -80,8 +100,6 @@ class Post(_Abstract):
     channel         = models.ForeignKey(Channel)
     author          = models.ForeignKey(settings.AUTH_USER_MODEL)
     status          = models.IntegerField(max_length=1, default=STATUSES.DRAFT, choices=STATUSES)
-    text            = models.TextField(default='')                        #move to abstract
-    rendered_text   = models.TextField(default='', blank=True)            #move to abstract
     custom_summary  = models.TextField(default='')
     created         = models.DateTimeField(auto_now_add=True, editable=False)
     modified        = models.DateTimeField(auto_now=True, editable=False)
@@ -105,24 +123,6 @@ class Post(_Abstract):
 
     summary = property(_get_summary)
 
-    def get_oembed_markup(self, matchobj):
-        gd = matchobj.groupdict('')
-        return '%(spacing)s<a href="%(url)s">%(url)s</a>' % gd
-
-    def render(self):
-        #TODO: strip out dangerous HTML attributes, only allow basic formatting tags
-        self.rendered_text = oembed_regex.sub(self.get_oembed_markup, self.text)
-
-    def save(self, *args, **kwargs):
-        if self.rendered_text == '':
-            self.render()
-
-        super(Post, self).save(*args, **kwargs)
-#        try:
-#            ping_google()
-#        except Exception:
-#            # Bare 'except' because we could get a variety of HTTP-related exceptions.
-#            pass
     def get_absolute_url(self):
         return reverse('mesh_post_view', args = (self.slug,))
 
