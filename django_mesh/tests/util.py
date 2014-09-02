@@ -38,14 +38,43 @@ class BaseTestCase(TestCase):
         self.username = 'test_user'
         self.password = 'foobar'
         self.user = User.objects.create_user(self.username, 'test_user@example.com', self.password)
+
         self.c1 = Channel(
             slug='public',
             title='Public',
+            public=True,
         )
+
         self.c2 = Channel(
             slug='another-channel',
             title='Another Channel',
+            public=True,
         )
+
+        self.following_public_channel = Channel(
+            slug='following-public',
+            title='following public',
+            public=True,
+        )
+
+        self.following_private_channel = Channel(
+            slug='following-private',
+            title='Following private',
+            public=False,
+        )
+
+        self.not_following_public_channel = Channel(
+            slug='not-following-public',
+            title='Not following public',
+            public=True,
+        )
+
+        self.not_following_private_channel = Channel(
+            slug='not-following-private',
+            title='not following private',
+            public=False,
+        )
+
         self.p1 = Post(
             author=self.user,
             slug='unit-testing-unit-tests',
@@ -53,6 +82,7 @@ class BaseTestCase(TestCase):
             text='Lorem Ipsum etc.',
             status=Post.STATUSES.PUBLISHED
         )
+
         self.p2 = Post(
             author=self.user,
             slug='tree-falls-forest',
@@ -60,22 +90,23 @@ class BaseTestCase(TestCase):
             published=timezone.now()+timedelta(days=1),
             status=Post.STATUSES.PUBLISHED
         )
+
         self.p3 = Post(
             author=self.user,
             slug='tree-falls-forest-again',
             title='Tree Falls in Forest, Could There be a Tree Flu Epidemic?',
             status=Post.STATUSES.DRAFT
         )
+
         self.comment1 = Comment(
             site=Site.objects.get_current(),
             user=self.user,
             comment='Thanks for sharing.',
         
         )
-    
+
     def tearDown(self):
         #FIXME: dqc doesn't intercept db destruction or rollback
         cache.clear()
-        
         models.oembed_regex = self._old_oembed_regex
 

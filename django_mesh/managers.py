@@ -17,7 +17,18 @@
 # Django imports
 from django.db import models
 from django.utils import timezone
+from django.db.models.query import QuerySet 
+from django.db.models import Q
 
-class PostManager(models.Manager):
+class PostQuerySet(QuerySet):
     def active(self):
         return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now())
+
+class ChannelQuerySet(QuerySet):
+    def get_for_user(self, user):
+        if user.id == None:
+            return self.filter(public=True)
+        else:
+            return self.filter(Q(public=True) | Q(followers=user))
+
+

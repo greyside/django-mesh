@@ -16,7 +16,6 @@
 
 #Django imports
 from django.conf.urls import patterns, url
-
 from .views import IndexView, ChannelIndexView, ChannelDetailView, PostIndexView, PostDetailView, PostCommentsView
 
 urlpatterns = patterns('',

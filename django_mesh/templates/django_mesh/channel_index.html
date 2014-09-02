@@ -1,6 +1,7 @@
 {% extends "django_mesh/base.html" %}
 {% block content %}
 <div class="channel_list">
+
 {% for channel in channel_list %}
 	<div>
 		<a href="{% url 'mesh_channel_view' slug=channel.slug %}">{{ channel.title }}</a>
