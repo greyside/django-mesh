@@ -36,7 +36,6 @@ oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 
 class _Abstract(models.Model):
     slug = models.SlugField(unique=True)
-    #microblog compatible.
     title = models.CharField(max_length=140, unique=True)
 
     def __unicode__(self):
@@ -53,9 +52,9 @@ class Channel(_Abstract):
         (1, 'AUTHOR', 'Author'),
     )
 
-    enrollment = models.IntegerField(max_length=1, default=ENROLLMENTS.SELF, choices=ENROLLMENTS)
-
     public = models.BooleanField(default=True, help_text="If False, only followers will be able to see content.")
+
+    enrollment = models.IntegerField(max_length=1, default=ENROLLMENTS.SELF, choices=ENROLLMENTS)
 
     objects = PassThroughManager.for_queryset_class(ChannelQuerySet)()
 
@@ -67,7 +66,6 @@ class Channel(_Abstract):
 
     class Meta:
         ordering = ['title']
-
 
 class Post(_Abstract):
     SUMMARY_LENGTH = 50

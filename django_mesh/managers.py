@@ -24,6 +24,12 @@ class PostQuerySet(QuerySet):
     def active(self):
         return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now())
 
+    def get_for_user(self, user):
+        if user.id == None:
+            return self.filter(channel__public=True)
+        else:
+            return self.filter(Q(channel__public=True) | Q(channel__followers=user))
+
 class ChannelQuerySet(QuerySet):
     def get_for_user(self, user):
         if user.id == None:
