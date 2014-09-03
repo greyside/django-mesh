@@ -36,8 +36,8 @@ oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 
 class _Abstract(models.Model):
     slug = models.SlugField(unique=True)
-    #microblog compatible.
     title = models.CharField(max_length=140, unique=True)
+    public = models.BooleanField(default=True, help_text="If False, only followers will be able to see content.")
 
     def __unicode__(self):
         return self.title
@@ -55,8 +55,6 @@ class Channel(_Abstract):
 
     enrollment = models.IntegerField(max_length=1, default=ENROLLMENTS.SELF, choices=ENROLLMENTS)
 
-    public = models.BooleanField(default=True, help_text="If False, only followers will be able to see content.")
-
     objects = PassThroughManager.for_queryset_class(ChannelQuerySet)()
 
     def get_absolute_url(self):
@@ -67,7 +65,6 @@ class Channel(_Abstract):
 
     class Meta:
         ordering = ['title']
-
 
 class Post(_Abstract):
     SUMMARY_LENGTH = 50

@@ -22,6 +22,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+
 # App imports
 from .models import Channel, Post
 
@@ -34,8 +35,7 @@ class IndexView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         ret = super(IndexView, self).get_queryset(*args, **kwargs)
-        c = Channel.objects.get_for_user(user=self.request.user)
-        return ret.filter(channel=c).active()
+        return ret.get_for_user(user=self.request.user).active()
 
 class ChannelIndexView(ListView):
     model = Channel
@@ -54,8 +54,7 @@ class ChannelDetailView(ListView):
     
     def get_queryset(self, *args, **kwargs):
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
-        c = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
-        return ret.filter(channel=c).active()
+        return ret.get_for_user(user=self.request.user).active()
 
 class PostIndexView(ListView):
     model = Post
@@ -64,8 +63,7 @@ class PostIndexView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         ret = super(PostIndexView, self).get_queryset(*args, **kwargs)
-        c = Channel.objects.get_for_user(user=self.request.user)
-        return ret.filter(channel=c).active()
+        return ret.get_for_user(user=self.request.user).active()
 
 class PostDetailView(DetailView):
     model = Post
@@ -74,8 +72,7 @@ class PostDetailView(DetailView):
 
     def get_queryset(self, *args, **kwargs):
         ret = super(PostDetailView, self).get_queryset(*args, **kwargs)
-        c = Channel.objects.get_for_user(user=self.request.user)
-        return ret.filter(channel=c).active()
+        return ret.get_for_user(user=self.request.user).active()
 
 class PostCommentsView(DetailView):
     model = Post
