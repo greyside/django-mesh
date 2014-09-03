@@ -37,9 +37,9 @@ class IndexViewTestCase(BaseTestCase):
         self.p3.channel = self.c1
         self.p3.save()
 
-        response = self.client.get(reverse('mesh_post_index'))
-
+        response = self.client.get(reverse('mesh_index'))
         self.assertEqual(response.status_code, 200)
+
         self.assertContains(response, self.p1.title)
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
@@ -66,7 +66,7 @@ class IndexViewTestCase(BaseTestCase):
         self.p5 = self.not_following_private_channel
         self.p5.save()
 
-        response = self.client.get(reverse('mesh_post_index'))
+        response = self.client.get(reverse('mesh_index'))
         self.assertEqual(response.status_code, 200)
 
         self.assertContains(response, self.p1.title)
@@ -93,7 +93,7 @@ class IndexViewTestCase(BaseTestCase):
         self.p5 = self.not_following_private_channel
         self.p5.save()
 
-        response = self.client.get(reverse('mesh_post_index'))
+        response = self.client.get(reverse('mesh_index'))
         self.assertEqual(response.status_code, 200)
 
         self.assertContains(response, self.p1.title)
@@ -314,4 +314,3 @@ class PostCommentsViewTestCase(BaseTestCase):
         self.assertContains(response, self.p1.title)
         self.assertContains(response, self.comment1.comment)
         self.assertNotContains(response, self.p2.title)
-
