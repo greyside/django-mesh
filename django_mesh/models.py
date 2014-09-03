@@ -73,9 +73,9 @@ class Channel(_Abstract):
         (1, 'AUTHOR', 'Author'),
     )
 
-    enrollment = models.IntegerField(max_length=1, default=ENROLLMENTS.SELF, choices=ENROLLMENTS)
-
     public = models.BooleanField(default=True, help_text="If False, only followers will be able to see content.")
+
+    enrollment = models.IntegerField(max_length=1, default=ENROLLMENTS.SELF, choices=ENROLLMENTS)
 
     objects = PassThroughManager.for_queryset_class(ChannelQuerySet)()
 
@@ -87,7 +87,6 @@ class Channel(_Abstract):
 
     class Meta:
         ordering = ['title']
-
 
 class Post(_Abstract):
     SUMMARY_LENGTH = 50

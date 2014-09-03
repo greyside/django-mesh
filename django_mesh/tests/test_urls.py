@@ -37,12 +37,69 @@ class IndexViewTestCase(BaseTestCase):
         self.p3.channel = self.c1
         self.p3.save()
 
-        response = self.client.get(reverse('mesh_post_index'))
-
+        response = self.client.get(reverse('mesh_index'))
         self.assertEqual(response.status_code, 200)
+
         self.assertContains(response, self.p1.title)
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
+
+    def test_what_posts_user_sees(self):
+        self.client.login(username='test_user', password='foobar')
+        user = self.user
+
+        self.following_public_channel.save()
+        self.following_public_channel.followers.add(user)
+        self.p1.channel = self.following_public_channel
+        self.p1.save()
+
+        self.following_private_channel.save()
+        self.following_private_channel.followers.add(user)
+        self.p6.channel = self.following_private_channel
+        self.p6.save()
+
+        self.not_following_public_channel.save()
+        self.p4.channel = self.not_following_public_channel
+        self.p4.save()
+
+        self.not_following_private_channel.save()
+        self.p5 = self.not_following_private_channel
+        self.p5.save()
+
+        response = self.client.get(reverse('mesh_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.p1.title)
+        self.assertContains(response, self.p6.title)
+        self.assertContains(response, self.p4.title)
+        self.assertNotContains(response, self.p5.title)
+
+    def test_what_posts_anon_sees(self):
+        user = self.user
+
+        self.following_public_channel.save()
+        self.p1.channel = self.following_public_channel
+        self.p1.save()
+
+        self.following_private_channel.save()
+        self.p6.channel = self.following_private_channel
+        self.p6.save()
+
+        self.not_following_public_channel.save()
+        self.p4.channel = self.not_following_public_channel
+        self.p4.save()
+
+        self.not_following_private_channel.save()
+        self.p5 = self.not_following_private_channel
+        self.p5.save()
+
+        response = self.client.get(reverse('mesh_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.p1.title)
+        self.assertNotContains(response, self.p6.title)
+        self.assertContains(response, self.p4.title)
+        self.assertNotContains(response, self.p5.title)
 
 class ChannelIndexViewTestCase(BaseTestCase):
     def test_index_empty(self):
@@ -76,10 +133,10 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.assertNotContains(response, self.following_private_channel.title)
 
 
-    def test_what_user_sees(self):
+    def test_what_channel_user_sees(self):
         self.client.login(username='test_user', password='foobar')
         user = self.user
-        user.save()
+
 
         self.not_following_public_channel.save()
         self.not_following_private_channel.save()
@@ -164,6 +221,63 @@ class PostIndexViewTestCase(BaseTestCase):
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
 
+    def test_what_posts_user_sees(self):
+        self.client.login(username='test_user', password='foobar')
+        user = self.user
+
+        self.following_public_channel.save()
+        self.following_public_channel.followers.add(user)
+        self.p1.channel = self.following_public_channel
+        self.p1.save()
+
+        self.following_private_channel.save()
+        self.following_private_channel.followers.add(user)
+        self.p6.channel = self.following_private_channel
+        self.p6.save()
+
+        self.not_following_public_channel.save()
+        self.p4.channel = self.not_following_public_channel
+        self.p4.save()
+
+        self.not_following_private_channel.save()
+        self.p5 = self.not_following_private_channel
+        self.p5.save()
+
+        response = self.client.get(reverse('mesh_post_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.p1.title)
+        self.assertContains(response, self.p6.title)
+        self.assertContains(response, self.p4.title)
+        self.assertNotContains(response, self.p5.title)
+
+    def test_what_posts_anon_sees(self):
+        user = self.user
+
+        self.following_public_channel.save()
+        self.p1.channel = self.following_public_channel
+        self.p1.save()
+
+        self.following_private_channel.save()
+        self.p6.channel = self.following_private_channel
+        self.p6.save()
+
+        self.not_following_public_channel.save()
+        self.p4.channel = self.not_following_public_channel
+        self.p4.save()
+
+        self.not_following_private_channel.save()
+        self.p5 = self.not_following_private_channel
+        self.p5.save()
+
+        response = self.client.get(reverse('mesh_post_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.p1.title)
+        self.assertNotContains(response, self.p6.title)
+        self.assertContains(response, self.p4.title)
+        self.assertNotContains(response, self.p5.title)
+
 
 class PostDetailViewTestCase(BaseTestCase):
     def test_post_view(self):
@@ -200,4 +314,3 @@ class PostCommentsViewTestCase(BaseTestCase):
         self.assertContains(response, self.p1.title)
         self.assertContains(response, self.comment1.comment)
         self.assertNotContains(response, self.p2.title)
-

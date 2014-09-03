@@ -98,6 +98,30 @@ class BaseTestCase(TestCase):
             status=Post.STATUSES.DRAFT
         )
 
+        self.p4 = Post(
+            author=self.user,
+            slug='tests',
+            title='not following public channel',
+            text='should still show up',
+            status=Post.STATUSES.PUBLISHED
+            )
+
+        self.p5 = Post(
+            author=self.user,
+            slug='tests-private',
+            title='not following private channel',
+            text='should not show up',
+            status=Post.STATUSES.PUBLISHED
+            )
+
+        self.p6 = Post(
+            author=self.user,
+            slug='tests-another',
+            title='test another channel p6',
+            text='made public',
+            status=Post.STATUSES.PUBLISHED
+            )
+
         self.comment1 = Comment(
             site=Site.objects.get_current(),
             user=self.user,
