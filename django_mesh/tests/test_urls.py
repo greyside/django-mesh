@@ -122,6 +122,8 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.not_following_private_channel.save()
         self.following_public_channel.save()
         self.following_private_channel.save()
+        self.private_author_enroll.save()
+        self.private_self_enroll.save()
 
         response = self.client.get(reverse('mesh_channel_index'))
         self.assertEqual(response.status_code, 200)
@@ -132,6 +134,8 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.assertNotContains(response, self.not_following_private_channel.title)
         self.assertNotContains(response, self.following_private_channel.title)
 
+        self.assertNotContains(response, self.private_author_enroll.title)
+        self.assertNotContains(response, self.private_self_enroll.title)
 
     def test_what_channel_user_sees(self):
         self.client.login(username='test_user', password='foobar')
@@ -142,6 +146,8 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.not_following_private_channel.save()
         self.following_public_channel.save()
         self.following_private_channel.save()
+        self.private_author_enroll.save()
+        self.private_self_enroll.save()
 
         self.following_public_channel.followers.add(user)
         self.following_private_channel.followers.add(user)
@@ -152,7 +158,10 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.assertContains(response, self.not_following_public_channel.title)
         self.assertContains(response, self.following_public_channel.title)
         self.assertContains(response, self.following_private_channel.title)
-        self.assertNotContains(response, self.not_following_private_channel.title)
+        self.assertContains(response, self.not_following_private_channel.title)
+
+        self.assertNotContains(response, self.private_author_enroll.title)
+        self.assertContains(response, self.private_self_enroll.title)
 
 
 class ChannelDetailViewTestCase(BaseTestCase):

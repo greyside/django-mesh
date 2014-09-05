@@ -75,6 +75,22 @@ class BaseTestCase(TestCase):
             public=False,
         )
 
+
+        self.private_self_enroll = Channel(
+            slug='private-self-enroll',
+            title='private self enroll should show up',
+            public=False,
+            enrollment=Channel.ENROLLMENTS.SELF
+        )
+
+
+        self.private_author_enroll = Channel(
+            slug='private-author-enroll',
+            title='private author enroll should not show up if not allowed',
+            public=False,
+            enrollment=Channel.ENROLLMENTS.AUTHOR
+        )
+
         self.p1 = Post(
             author=self.user,
             slug='unit-testing-unit-tests',
