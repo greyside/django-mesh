@@ -35,6 +35,6 @@ class ChannelQuerySet(QuerySet):
         if user.id == None:
             return self.filter(public=True)
         else:
-            return self.filter(Q(public=True) | Q(followers=user))
+            return self.filter(Q(public=True) | Q(followers=user) | Q(enrollment=self.model.ENROLLMENTS.SELF))
 
 

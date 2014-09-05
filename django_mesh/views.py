@@ -80,3 +80,14 @@ class PostCommentsView(DetailView):
     model = Post
     template_name = 'django_mesh/post_comments.html'
     context_object_name = 'post'
+
+def self_enrollment(request, *args, **kwargs):
+    user = self.request.user
+    if request.method == 'POST':
+        channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+        if channel.enrollment == Channel.ENROLLMENTS.SELF:
+            add_subscription_to_channel = channel
+            add_subscription_to_channel.followers.add(user)
+            return HttpResponseRedirect(reverse('mesh_channel_index'))
+    else:
+        return HttpResponseRedirect('mesh_channel_index')
