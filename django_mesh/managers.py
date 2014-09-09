@@ -22,7 +22,7 @@ from django.db.models import Q
 
 class PostQuerySet(QuerySet):
     def active(self):
-        return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now())
+        return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now()).distinct()
 
     def get_for_user(self, user):
         if user.id == None:
