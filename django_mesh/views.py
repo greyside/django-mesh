@@ -62,7 +62,7 @@ class ChannelDetailView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
-        return ret.filter(channel=self.channel)
+        return ret.filter(channel=self.channel).active()
 
     def get_context_data(self, **kwargs):
         context = super(ChannelDetailView, self).get_context_data(**kwargs)
@@ -92,15 +92,16 @@ class PostCommentsView(DetailView):
     template_name = 'django_mesh/post_comments.html'
     context_object_name = 'post'
 
-def self_enrollment(request, *args, **kwargs):
-    return HttpResponse('hello')
 
-    # user = self.request.user
-    # if request.method == 'POST':
-    #     channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
-    #     if channel.enrollment == Channel.ENROLLMENTS.SELF:
-    #         add_subscription_to_channel = channel
-    #         add_subscription_to_channel.followers.add(user)
-    #         return HttpResponseRedirect(reverse('mesh_channel_index'))
-    # else:
-    #     return HttpResponseRedirect('mesh_channel_index')
+def self_enrollment(request, *args, **kwargs):
+    user = request.user
+    if request.method == 'POST':
+        channel = get_object_or_404(Channel.objects.get_for_user(user), slug=kwargs['slug'])
+        if channel.enrollment == Channel.ENROLLMENTS.SELF:
+            channel.followers.add(user)
+            return HttpResponseRedirect(reverse('mesh_channel_index'))
+        else:
+            return HttpResponseRedirect(reverse('mesh_channel_index'))
+    else:
+        return HttpResponseRedirect(reverse('mesh_channel_index'))
+
