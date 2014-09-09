@@ -23,9 +23,12 @@ urlpatterns = patterns('',
     url(r'^$', IndexView.as_view(), name="mesh_index"),
     url(r'^channels/$', ChannelIndexView.as_view(), name="mesh_channel_index"),
     url(r'^channels/(?P<slug>.+)/$', ChannelDetailView.as_view(), name="mesh_channel_view"),
-    url(r'^channels/(?P<slug>.+)/sub/$', views.self_enrollment, name="mesh_sub"),
+    url(r'^sub/(?P<slug>.+)/$', views.self_enrollment, name="mesh_sub"),
 
     url(r'^posts/$', PostIndexView.as_view(), name="mesh_post_index"),
     url(r'^posts/(?P<slug>.+)/comments/$', PostCommentsView.as_view(), name="mesh_post_comments"),
     url(r'^posts/(?P<slug>.+)/$', PostDetailView.as_view(), name="mesh_post_view"),
 )
+
+#override dispatch method first, then later on edit queryset
+#set self.channel before overriding dispatch method

@@ -22,6 +22,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 
 # App imports
 from .models import Channel, Post
@@ -53,10 +55,23 @@ class ChannelDetailView(ListView):
     template_name = 'django_mesh/channel_view.html'
     context_object_name = 'post_list'
 
+    def dispatch(self, request, *args, **kwargs):
+        self.channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+        response = super(ChannelDetailView, self).dispatch(request, *args, **kwargs)
+        return response
+
     def get_queryset(self, *args, **kwargs):
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
-        c = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
-        return ret.filter(channel=c).active()
+#        c = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+        return ret.filter(channel=self.channel).active()
+
+    def get_context_data(self, **kwargs):
+        context = super(ChannelDetailView, self).get_context_data(**kwargs)
+        context['channel'] = self.channel
+        return context
+        # we have access to both Channel and Post now! so fix the html
+        # and it should direct to channel
+
 
 class PostIndexView(ListView):
     model = Post
@@ -82,12 +97,14 @@ class PostCommentsView(DetailView):
     context_object_name = 'post'
 
 def self_enrollment(request, *args, **kwargs):
-    user = self.request.user
-    if request.method == 'POST':
-        channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
-        if channel.enrollment == Channel.ENROLLMENTS.SELF:
-            add_subscription_to_channel = channel
-            add_subscription_to_channel.followers.add(user)
-            return HttpResponseRedirect(reverse('mesh_channel_index'))
-    else:
-        return HttpResponseRedirect('mesh_channel_index')
+    return HttpResponseRedirect(reverse('mesh_channel_index'))
+
+    # user = self.request.user
+    # if request.method == 'POST':
+    #     channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+    #     if channel.enrollment == Channel.ENROLLMENTS.SELF:
+    #         add_subscription_to_channel = channel
+    #         add_subscription_to_channel.followers.add(user)
+    #         return HttpResponseRedirect(reverse('mesh_channel_index'))
+    # else:
+    #     return HttpResponseRedirect('mesh_channel_index')

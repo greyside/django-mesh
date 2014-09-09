@@ -4,32 +4,36 @@
 
 
 <div class="post_list">
-{% autopaginate post_list 50 %}
-{% for post in post_list %}
-	<div>
-		<a href="{% url 'mesh_post_view' slug=post.slug %}">{{ post.title }}</a>
-		<p class="summary">{{ post.summary }}</p>
-	</div>
+    {% autopaginate post_list 50 %}
+    {% for post in post_list %}
+        <div>
+            <a href="{% url 'mesh_post_view' slug=post.slug %}">{{ post.title }}</a>
+            <p class="summary">{{ post.summary }}</p>
+        </div>
+
 {% empty %}
-	There are no posts to display.
+    There are no posts to display.
 {% endfor %}
+
 {% paginate %}
 </div>
 
-{% for channel in post_list %}
+<div class="channel_list">
+    {% for channel in channel_list %}
 
-<form id="category_form" method="post" action="{% url 'mesh_sub' slug=channel.slug %}">
+    {% empty %}
+        <form id="category_form" method="post" action="{% url 'mesh_sub' slug=channel.slug %}">
 
-            {% csrf_token %}
+        {% csrf_token %}
 
+        <input type="submit" name="submit" value="subscribe to channel" />
+
+        </form>
 {% endfor %}
-
-<input type="submit" name="submit" value="subscribe to this channel" />
-
-</form>
-
-
-
-
+</div>
 
 {% endblock content %}
+
+
+
+
