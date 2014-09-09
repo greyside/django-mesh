@@ -23,7 +23,7 @@ from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 
 # App imports
 from .models import Channel, Post
@@ -62,16 +62,12 @@ class ChannelDetailView(ListView):
 
     def get_queryset(self, *args, **kwargs):
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
-#        c = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
-        return ret.filter(channel=self.channel).active()
+        return ret.filter(channel=self.channel)
 
     def get_context_data(self, **kwargs):
         context = super(ChannelDetailView, self).get_context_data(**kwargs)
         context['channel'] = self.channel
         return context
-        # we have access to both Channel and Post now! so fix the html
-        # and it should direct to channel
-
 
 class PostIndexView(ListView):
     model = Post
@@ -97,7 +93,7 @@ class PostCommentsView(DetailView):
     context_object_name = 'post'
 
 def self_enrollment(request, *args, **kwargs):
-    return HttpResponseRedirect(reverse('mesh_channel_index'))
+    return HttpResponse('hello')
 
     # user = self.request.user
     # if request.method == 'POST':

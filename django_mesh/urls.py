@@ -29,6 +29,3 @@ urlpatterns = patterns('',
     url(r'^posts/(?P<slug>.+)/comments/$', PostCommentsView.as_view(), name="mesh_post_comments"),
     url(r'^posts/(?P<slug>.+)/$', PostDetailView.as_view(), name="mesh_post_view"),
 )
-
-#override dispatch method first, then later on edit queryset
-#set self.channel before overriding dispatch method
