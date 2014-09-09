@@ -61,9 +61,10 @@ class ChannelDetailView(ListView):
         return response
 
     def get_queryset(self, *args, **kwargs):
+        # user = self.request.user
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
+        # return ret.filter(channel=self.channel).active().subscriber(user)
         return ret.filter(channel=self.channel).active()
-
     def get_context_data(self, **kwargs):
         context = super(ChannelDetailView, self).get_context_data(**kwargs)
         context['channel'] = self.channel
