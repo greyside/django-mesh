@@ -20,6 +20,7 @@ from django.core.urlresolvers import reverse
 # Test imports
 from .util import BaseTestCase
 
+
 class IndexViewTestCase(BaseTestCase):
     def test_empty(self):
 
@@ -165,6 +166,39 @@ class ChannelIndexViewTestCase(BaseTestCase):
 
 
 class ChannelDetailViewTestCase(BaseTestCase):
+
+    def test_subscribe_button_shows_up_for_not_logged_in(self):
+        user=self.user
+        self.c1.save()
+        self.c3.save()
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "subscribe to channel button")
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_subscribe_button_shows_up_for_logged_in_user(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+        self.c1.save()
+        self.c3.save()
+        self.private_author_enroll.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "subscribe to channel button")
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "subscribe to channel button")
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.private_author_enroll.slug}))
+        self.assertEqual(response.status_code, 404)
+
+
+
     def test_view_empty(self):
         self.c1.save()
 
@@ -206,6 +240,71 @@ class ChannelDetailViewTestCase(BaseTestCase):
 
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
+
+    def test_available_post_for_logged_in_user(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+        self.p1.channel = self.c1
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)
+
+        self.c3.save()
+        self.p1.channel = self.c3
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, self.p1.title)
+
+        self.c3.followers.add(user)
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)
+
+        self.private_author_enroll.save()
+        self.p1.channel = self.private_author_enroll
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.private_author_enroll.slug}))
+        self.assertEqual(response.status_code, 404)
+
+        self.private_author_enroll.followers.add(user)
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.private_author_enroll.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)
+
+
+    def test_available_post_for_not_logged_in_user(self):
+
+        user = self.user
+        self.c1.save()
+        self.p1.channel = self.c1
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)
+
+        self.c3.save()
+        self.p1.channel = self.c3
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+        self.assertEqual(response.status_code, 404)
+
+
+        self.private_author_enroll.save()
+        self.p1.channel = self.private_author_enroll
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.private_author_enroll.slug}))
+        self.assertEqual(response.status_code, 404)
+
 
 class PostIndexViewTestCase(BaseTestCase):
     def test_index_empty(self):
@@ -323,3 +422,32 @@ class PostCommentsViewTestCase(BaseTestCase):
         self.assertContains(response, self.p1.title)
         self.assertContains(response, self.comment1.comment)
         self.assertNotContains(response, self.p2.title)
+
+class SelfEnrollmentTestCase(BaseTestCase):
+
+    def test_GET_request_returns_to_channel_index(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+        response = self.client.get(reverse('mesh_sub',kwargs={'slug': self.c1.slug}))
+        self.assertRedirects(response, reverse('mesh_channel_index'), status_code=302)
+
+    def test_Post_request(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c3.save()
+        self.p1.channel = self.c3
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view',kwargs={'slug': self.c3.slug}))
+
+        self.assertNotContains(response, self.p1.title)
+
+        self.client.post(reverse('mesh_sub', kwargs={'slug':self.c3.slug}))
+
+        response = self.client.get(reverse('mesh_channel_view',kwargs={'slug': self.c3.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)

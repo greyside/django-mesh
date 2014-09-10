@@ -51,6 +51,12 @@ class BaseTestCase(TestCase):
             public=True,
         )
 
+        self.c3 = Channel(
+            slug='yet-another-channel!',
+            title='Yet Another Channel!',
+            public=False,
+        )
+
         self.following_public_channel = Channel(
             slug='following-public',
             title='following public',
