@@ -65,9 +65,10 @@ class ChannelDetailView(ListView):
         user = self.request.user
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
 
-        return ret.get_for_user(user=self.request.user).active().filter(channel=self.channel)
-
-
+        if ((self.channel.public) or (user in self.channel.followers.all())):
+            return ret.filter(channel=self.channel).active()
+        else:
+            return ret.none()
 
     def get_context_data(self, **kwargs):
         context = super(ChannelDetailView, self).get_context_data(**kwargs)
