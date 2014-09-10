@@ -30,9 +30,6 @@ class PostQuerySet(QuerySet):
         else:
             return self.filter(Q(channel__public=True) | Q(channel__followers=user))
 
-    def subscriber(self, user):
-        return self.filter(Q(channel__followers=user))
-
 class ChannelQuerySet(QuerySet):
     def get_for_user(self, user):
         if user.id == None:

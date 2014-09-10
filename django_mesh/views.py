@@ -55,16 +55,20 @@ class ChannelDetailView(ListView):
     template_name = 'django_mesh/channel_view.html'
     context_object_name = 'post_list'
 
+
     def dispatch(self, request, *args, **kwargs):
         self.channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
         response = super(ChannelDetailView, self).dispatch(request, *args, **kwargs)
         return response
 
     def get_queryset(self, *args, **kwargs):
-        # user = self.request.user
+        user = self.request.user
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
-        # return ret.filter(channel=self.channel).active().subscriber(user)
-        return ret.filter(channel=self.channel).active()
+
+        return ret.get_for_user(user=self.request.user).active().filter(channel=self.channel)
+
+
+
     def get_context_data(self, **kwargs):
         context = super(ChannelDetailView, self).get_context_data(**kwargs)
         context['channel'] = self.channel
