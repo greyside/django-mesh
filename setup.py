@@ -5,7 +5,19 @@ from setuptools import setup
 import django_mesh
 
 package_name = 'django_mesh'
-test_package_name = '%s_test_project' % package_name
+
+def runtests():
+    import os
+    import sys
+    
+    import django
+    from django.core.management import call_command
+    
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'django_mesh_test_project.settings'
+    if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
+        django.setup()
+    call_command('test')
+    sys.exit()
 
 setup(name='django-mesh',
     version=django_mesh.__version__,
@@ -35,6 +47,6 @@ setup(name='django-mesh',
     ],
     include_package_data=True,
     install_requires=['Django==1.6', 'django-model-utils', 'django-pagination', 'django-taggit',],
-    test_suite = '%s.runtests.runtests' % test_package_name,
+    test_suite='setup.runtests',
 )
 
