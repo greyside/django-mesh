@@ -168,7 +168,7 @@ class ChannelIndexViewTestCase(BaseTestCase):
 
 class ChannelDetailViewTestCase(BaseTestCase):
 
-    def test_subscribe_button_shows_up_for_not_logged_in(self):
+    def test_subscribe_button_doesnt_shows_up_for_not_logged_in(self):
         user=self.user
 
         self.c1.save()
@@ -177,7 +177,7 @@ class ChannelDetailViewTestCase(BaseTestCase):
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "subscribe to channel button")
+        self.assertNotContains(response, "subscribe to channel button")
 
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
         self.assertEqual(response.status_code, 404)
