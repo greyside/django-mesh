@@ -22,16 +22,21 @@
     {% paginate %}
 </div>
 
-<div class="channel_list">
-    {% for channel in channel_list %}
+{% if request.user.is_authenticated %}
 
-    {% empty %}
-        <form id="category_form" method="post" action="{% url 'mesh_sub' slug=channel.slug %}">
-            {% csrf_token %}
-            <input type="submit" name="submit" value="subscribe to channel button" />
-        </form>
-    {% endfor %}
-</div>
+    <div class="channel_list">
+        {% for channel in channel_list %}
+        {% empty %}
+            <form id="category_form" method="post" action="{% url 'mesh_sub' slug=channel.slug %}">
+                {% csrf_token %}
+                <input type="submit" name="submit" value="subscribe to channel button" />
+            </form>
+        {% endfor %}
+    </div>
+
+{% else %}
+    Please log in to subscribe
+{% endif %}
 
 {% endblock content %}
 
