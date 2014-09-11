@@ -2,20 +2,24 @@
 {% load pagination_tags %}
 {% block content %}
 
-
 <div class="post_list">
     {% autopaginate post_list 50 %}
     {% for post in post_list %}
+
         <div>
-            <a href="{% url 'mesh_post_view' slug=post.slug %}">{{ post.title }}</a>
-            <p class="summary">{{ post.summary }}</p>
+            <a href="{% url 'mesh_post_view' slug=post.slug %}">
+                {{ post.title }}
+            </a>
+
+            <p class="summary">
+                {{ post.summary }}
+            </p>
         </div>
 
-{% empty %}
-    There are no posts to display.
-{% endfor %}
-
-{% paginate %}
+    {% empty %}
+        There are no posts to display.
+    {% endfor %}
+    {% paginate %}
 </div>
 
 <div class="channel_list">
@@ -23,13 +27,10 @@
 
     {% empty %}
         <form id="category_form" method="post" action="{% url 'mesh_sub' slug=channel.slug %}">
-
-        {% csrf_token %}
-
-        <input type="submit" name="submit" value="subscribe to channel button" />
-
+            {% csrf_token %}
+            <input type="submit" name="submit" value="subscribe to channel button" />
         </form>
-{% endfor %}
+    {% endfor %}
 </div>
 
 {% endblock content %}

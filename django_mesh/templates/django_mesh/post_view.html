@@ -1,23 +1,34 @@
 {% extends "django_mesh/base.html" %}
 {% load comments %}
 {% block content %}
+
 <h2>{{ post.title }}</h2>
+
 <div class="post">
-{{ post.rendered_text }}
+    {{ post.rendered_text }}
 </div>
+
 {% get_comment_count for post as comment_count %}
 {% render_comment_form for post %}
-<p>{{ comment_count }} comments have been posted.</p>
-<div class="comment_list">
-	{% get_comment_list for post as comment_list %}
-	{% for comment in comment_list|slice:":25" %}
-	<div>
-		<a name="comment_{{ comment.id }}"></a>
-		<p>{{ comment.comment }}</p>
-		<a href="{% get_comment_permalink comment '#comment-%(id)s' %}">
-			permalink for comment #{{ forloop.counter }}
-		</a>
-	</div>
-	{% endfor %}
-</div>
+
+    <p>{{ comment_count }} comments have been posted.</p>
+
+    <div class="comment_list">
+        {% get_comment_list for post as comment_list %}
+        {% for comment in comment_list|slice:":25" %}
+            <div>
+                <a name="comment_{{ comment.id }}"></a>
+
+                <p>
+                    {{ comment.comment }}
+                </p>
+
+                <a href="{% get_comment_permalink comment '#comment-%(id)s' %}">
+                    permalink for comment #{{ forloop.counter }}
+                </a>
+            </div>
+
+        {% endfor %}
+    </div>
+
 {% endblock content %}
