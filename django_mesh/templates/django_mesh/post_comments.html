@@ -1,6 +1,6 @@
 {% extends "django_mesh/base.html" %}
 {% load comments %}
-{% load pagination_tags %}
+
 {% block content %}
 
 <h2>{{ post.title }}</h2>
@@ -11,7 +11,7 @@
 <p>{{ comment_count }} comments have been posted.</p>
 <div class="comment_list">
 	{% get_comment_list for post as comment_list %}
-	{% autopaginate comment_list 50 %}
+
 	{% for comment in comment_list %}
 	<div>
 		<a name="comment-{{ comment.id }}"></a>
@@ -22,5 +22,5 @@
 	</div>
 	{% endfor %}
 </div>
-{% paginate %}
+
 {% endblock content %}
