@@ -32,6 +32,7 @@ class IndexView(ListView):
     model = Post
     template_name = 'django_mesh/index.html'
     context_object_name = 'post_list'
+    paginate_by = 50
 
     def get_queryset(self, *args, **kwargs):
         ret = super(IndexView, self).get_queryset(*args, **kwargs)
@@ -42,6 +43,7 @@ class ChannelIndexView(ListView):
     model = Channel
     template_name = 'django_mesh/channel_index.html'
     context_object_name = 'channel_list'
+    paginate_by = 50
 
     def get_queryset(self, *args, **kwargs):
         qs = super(ChannelIndexView, self).get_queryset(*args, **kwargs)
@@ -52,6 +54,7 @@ class ChannelDetailView(ListView):
     model = Post
     template_name = 'django_mesh/channel_view.html'
     context_object_name = 'post_list'
+    paginate_by = 50
 
     def get_queryset(self, *args, **kwargs):
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
@@ -62,6 +65,7 @@ class PostIndexView(ListView):
     model = Post
     template_name = 'django_mesh/post_index.html'
     context_object_name = 'post_list'
+    paginate_by = 50
 
     def get_queryset(self, *args, **kwargs):
         ret = super(PostIndexView, self).get_queryset(*args, **kwargs)
@@ -80,3 +84,4 @@ class PostCommentsView(DetailView):
     model = Post
     template_name = 'django_mesh/post_comments.html'
     context_object_name = 'post'
+    paginate_by = 50

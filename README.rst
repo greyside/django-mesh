@@ -15,7 +15,6 @@ Depends on
 * Django 1.6
  * auth, admin, comments
 * django-model-utils
-* django-pagination
 * django-taggit
 * python-pytz
 
@@ -24,3 +23,4 @@ Huboard
 -------
 
 https://huboard.com/SeanHayes/django-mesh/
+
