@@ -34,6 +34,7 @@ class IndexView(ListView):
     model = Post
     template_name = 'django_mesh/index.html'
     context_object_name = 'post_list'
+    paginate_by = 50
 
     def get_queryset(self, *args, **kwargs):
         ret = super(IndexView, self).get_queryset(*args, **kwargs)
@@ -43,6 +44,7 @@ class ChannelIndexView(ListView):
     model = Channel
     template_name = 'django_mesh/channel_index.html'
     context_object_name = 'channel_list'
+    paginate_by = 50
 
     def get_queryset(self, *args, **kwargs):
         qs = super(ChannelIndexView, self).get_queryset(*args, **kwargs)
@@ -52,6 +54,7 @@ class ChannelDetailView(ListView):
     model = Post
     template_name = 'django_mesh/channel_view.html'
     context_object_name = 'post_list'
+    paginate_by = 50
 
     def dispatch(self, request, *args, **kwargs):
         self.channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
@@ -76,6 +79,7 @@ class PostIndexView(ListView):
     model = Post
     template_name = 'django_mesh/post_index.html'
     context_object_name = 'post_list'
+    paginate_by = 50
 
     def get_queryset(self, *args, **kwargs):
         ret = super(PostIndexView, self).get_queryset(*args, **kwargs)
@@ -94,6 +98,7 @@ class PostCommentsView(DetailView):
     model = Post
     template_name = 'django_mesh/post_comments.html'
     context_object_name = 'post'
+    paginate_by = 50
 
 def self_enrollment(request, *args, **kwargs):
     user = request.user
@@ -106,3 +111,4 @@ def self_enrollment(request, *args, **kwargs):
             return HttpResponseRedirect(reverse('mesh_channel_index'))
     else:
         return HttpResponseRedirect(reverse('mesh_channel_index'))
+

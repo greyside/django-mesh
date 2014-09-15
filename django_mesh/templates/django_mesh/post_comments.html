@@ -1,8 +1,6 @@
 {% extends "django_mesh/base.html" %}
 {% load comments %}
-{% load pagination_tags %}
 {% block content %}
-
 <h2>{{ post.title }}</h2>
 
 {% get_comment_count for post as comment_count %}
@@ -11,24 +9,19 @@
 <p>{{ comment_count }} comments have been posted.</p>
 
 <div class="comment_list">
-    {% get_comment_list for post as comment_list %}
-    {% autopaginate comment_list 50 %}
-    {% for comment in comment_list %}
 
-        <div>
-            <a name="comment-{{ comment.id }}"></a>
+	{% get_comment_list for post as comment_list %}
 
-            <p>
-                {{ comment.comment }}
-            </p>
-
-            <a href="{% get_comment_permalink comment '#comment-%(id)s' %}">
-                permalink for comment #{{ forloop.counter }}
-            </a>
-        </div>
-
-    {% endfor %}
+	{% for comment in comment_list %}
+	<div>
+		<a name="comment-{{ comment.id }}"></a>
+		<p>{{ comment.comment }}</p>
+		<a href="{% get_comment_permalink comment '#comment-%(id)s' %}">
+			permalink for comment #{{ forloop.counter }}
+		</a>
+	</div>
+	{% endfor %}
 </div>
+{% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
 
-{% paginate %}
 {% endblock content %}
