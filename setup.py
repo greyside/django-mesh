@@ -16,6 +16,7 @@ def runtests():
     os.environ['DJANGO_SETTINGS_MODULE'] = 'django_mesh_test_project.settings'
     if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
         django.setup()
+    call_command('test', 'django_admin_smoke_tests')
     call_command('test')
     sys.exit()
 
@@ -46,7 +47,8 @@ setup(name='django-mesh',
         'django_mesh_test_project',
     ],
     include_package_data=True,
-    install_requires=['Django==1.6', 'django-model-utils', 'django-pagination', 'django-taggit',],
+    install_requires=['Django>=1.6', 'django-model-utils', 'django-pagination', 'django-taggit',],
+    tests_require=['django-admin-smoke-tests',],
     test_suite='setup.runtests',
 )
 
