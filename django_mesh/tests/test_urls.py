@@ -475,7 +475,7 @@ class SelfEnrollmentTestCase(BaseTestCase):
         self.private_author_enroll.save()
 
         response = self.client.post(reverse('mesh_sub', kwargs={'slug':self.c3.slug}))
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('mesh_channel_index'), status_code=302)
 
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
         self.assertEqual(response.status_code, 200)
