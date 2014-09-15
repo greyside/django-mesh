@@ -1,7 +1,6 @@
 {% extends "django_mesh/base.html" %}
 {% load comments %}
 {% block content %}
-{% include 'django_mesh/pagination.html' %}
 <h2>{{ post.title }}</h2>
 
 {% get_comment_count for post as comment_count %}
@@ -21,5 +20,5 @@
 	</div>
 	{% endfor %}
 </div>
-
+{% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
 {% endblock content %}
