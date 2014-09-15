@@ -48,7 +48,7 @@ setup(name='django-mesh',
     ],
     include_package_data=True,
     install_requires=['Django>=1.6', 'django-model-utils', 'django-pagination', 'django-taggit',],
-    tests_require=['django-admin-smoke-tests',],
+    tests_require=['django-admin-smoke-tests>=0.1.4',],
     test_suite='setup.runtests',
 )
 
