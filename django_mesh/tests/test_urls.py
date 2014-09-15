@@ -45,7 +45,7 @@ class IndexViewTestCase(BaseTestCase):
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
 
-    def test_what_posts_user_sees(self):
+    def test_what_posts_user_sees_when_logged_in(self):
         self.client.login(username='test_user', password='foobar')
         user = self.user
 
@@ -75,7 +75,7 @@ class IndexViewTestCase(BaseTestCase):
         self.assertContains(response, self.p4.title)
         self.assertNotContains(response, self.p5.title)
 
-    def test_what_posts_anon_sees(self):
+    def test_what_posts_is_seen_when_logged_out(self):
 
         self.following_public_channel.save()
         self.p1.channel = self.following_public_channel
@@ -118,7 +118,7 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.c1.title)
 
-    def test_what_channel_anony_sees(self):
+    def test_what_channel_users_logged_out_can_see(self):
 
         self.not_following_public_channel.save()
         self.following_public_channel.save()
@@ -139,7 +139,7 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.assertNotContains(response, self.private_author_enroll.title)
         self.assertNotContains(response, self.private_self_enroll.title)
 
-    def test_what_channel_user_sees(self):
+    def test_what_channel_users_who_are_logged_in_can_see(self):
         self.client.login(username='test_user', password='foobar')
         user = self.user
 
@@ -168,7 +168,7 @@ class ChannelIndexViewTestCase(BaseTestCase):
 
 class ChannelDetailViewTestCase(BaseTestCase):
 
-    def test_subscribe_button_doesnt_shows_up_for_not_logged_in(self):
+    def test_subscribe_button_doesnt_shows_up_for_logged_out_user(self):
         user=self.user
 
         self.c1.save()
@@ -290,7 +290,7 @@ class ChannelDetailViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
 
-    def test_available_post_for_not_logged_in_user(self):
+    def test_available_post_for_logged_out_user(self):
         self.c1.save()
         self.p1.channel = self.c1
         self.p1.save()
@@ -340,7 +340,7 @@ class PostIndexViewTestCase(BaseTestCase):
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
 
-    def test_what_posts_user_sees(self):
+    def test_what_logged_in_users_can_see(self):
         self.client.login(username='test_user', password='foobar')
         user = self.user
 
@@ -370,7 +370,7 @@ class PostIndexViewTestCase(BaseTestCase):
         self.assertContains(response, self.p4.title)
         self.assertNotContains(response, self.p5.title)
 
-    def test_what_posts_anon_sees(self):
+    def test_what_logged_out_user_can_see(self):
         self.following_public_channel.save()
         self.p1.channel = self.following_public_channel
         self.p1.save()
@@ -438,7 +438,7 @@ class PostCommentsViewTestCase(BaseTestCase):
 
 class SelfEnrollmentTestCase(BaseTestCase):
 
-    def test_GET_request_returns_to_channel_index(self):
+    def test_GET_request_redirects_to_mesh_channel_index(self):
         user = self.user
         self.client.login(username='test_user', password='foobar')
 
@@ -447,17 +447,13 @@ class SelfEnrollmentTestCase(BaseTestCase):
         response = self.client.get(reverse('mesh_sub',kwargs={'slug': self.c1.slug}))
         self.assertRedirects(response, reverse('mesh_channel_index'), status_code=302)
 
-    def test_Post_request(self):
+    def test_POST_request_lets_subscribe_to_self_enrollment_channel(self):
         user = self.user
         self.client.login(username='test_user', password='foobar')
 
         self.c3.save()
         self.p1.channel = self.c3
         self.p1.save()
-
-        response = self.client.get(reverse('mesh_channel_view',kwargs={'slug': self.c3.slug}))
-
-        self.assertNotContains(response, self.p1.title)
 
         self.client.post(reverse('mesh_sub', kwargs={'slug':self.c3.slug}))
 
@@ -466,17 +462,38 @@ class SelfEnrollmentTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
 
-    def test_Author_Enrollment(self):
+    def test_manually_entering_author_enrollment_only_channel_throws_404_error(self):
         user = self.user
         self.client.login(username='test_user', password='foobar')
 
-        self.c3.save()
-        self.private_author_enroll = self.c3
         self.private_author_enroll.save()
 
         response = self.client.post(reverse('mesh_sub', kwargs={'slug':self.c3.slug}))
-        self.assertRedirects(response, reverse('mesh_channel_index'), status_code=302)
+        self.assertEqual(response.status_code, 404)
+        followers = self.private_author_enroll.followers.all()
+        assert user not in followers
 
-        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
-        self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, self.private_author_enroll.title)
+    def test_author_enrollment(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.private_author_enroll.save()
+        self.private_author_enroll.followers.add(user)
+
+        assert user in self.private_author_enroll.followers.all()
+
+    def test_enrolling_twice_into_one_channel_will_not_double_count(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+        self.c1.followers.add(user)
+        self.client.post(reverse('mesh_sub', kwargs={'slug':self.c1.slug}))
+        count = self.c1.followers.count()
+        assert count == 1
+
+
+
+
+
+
