@@ -465,3 +465,18 @@ class SelfEnrollmentTestCase(BaseTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
+
+    def test_Author_Enrollment(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c3.save()
+        self.private_author_enroll = self.c3
+        self.private_author_enroll.save()
+
+        response = self.client.post(reverse('mesh_sub', kwargs={'slug':self.c3.slug}))
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, self.private_author_enroll.title)
