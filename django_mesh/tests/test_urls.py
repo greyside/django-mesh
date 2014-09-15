@@ -438,7 +438,7 @@ class PostCommentsViewTestCase(BaseTestCase):
 
 class SelfEnrollmentTestCase(BaseTestCase):
 
-    def test_GET_request_redirects_to_mesh_channel_index(self):
+    def test_get_request_redirects_to_mesh_channel_index(self):
         user = self.user
         self.client.login(username='test_user', password='foobar')
 
@@ -447,7 +447,7 @@ class SelfEnrollmentTestCase(BaseTestCase):
         response = self.client.get(reverse('mesh_sub',kwargs={'slug': self.c1.slug}))
         self.assertRedirects(response, reverse('mesh_channel_index'), status_code=302)
 
-    def test_POST_request_lets_subscribe_to_self_enrollment_channel(self):
+    def test_post_request_lets_subscribe_to_self_enrollment_channel(self):
         user = self.user
         self.client.login(username='test_user', password='foobar')
 
@@ -468,19 +468,10 @@ class SelfEnrollmentTestCase(BaseTestCase):
 
         self.private_author_enroll.save()
 
-        response = self.client.post(reverse('mesh_sub', kwargs={'slug':self.c3.slug}))
+        response = self.client.post(reverse('mesh_sub', kwargs={'slug':self.private_author_enroll.slug}))
         self.assertEqual(response.status_code, 404)
         followers = self.private_author_enroll.followers.all()
-        assert user not in followers
-
-    def test_author_enrollment(self):
-        user = self.user
-        self.client.login(username='test_user', password='foobar')
-
-        self.private_author_enroll.save()
-        self.private_author_enroll.followers.add(user)
-
-        assert user in self.private_author_enroll.followers.all()
+        self.assertNotIn(user, followers)
 
     def test_enrolling_twice_into_one_channel_will_not_double_count(self):
         user = self.user
@@ -490,10 +481,4 @@ class SelfEnrollmentTestCase(BaseTestCase):
         self.c1.followers.add(user)
         self.client.post(reverse('mesh_sub', kwargs={'slug':self.c1.slug}))
         count = self.c1.followers.count()
-        assert count == 1
-
-
-
-
-
-
+        self.assertEqual(count, 1)

@@ -39,4 +39,3 @@ class PostAdmin(admin.ModelAdmin):
         return super(PostAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(Post, PostAdmin)
-

@@ -36,5 +36,3 @@ class ChannelQuerySet(QuerySet):
             return self.filter(public=True)
         else:
             return self.filter(Q(public=True) | Q(followers=user) | Q(enrollment=self.model.ENROLLMENTS.SELF)).distinct()
-
-

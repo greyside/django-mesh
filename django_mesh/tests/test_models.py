@@ -61,4 +61,3 @@ class TestPost(BaseTestCase):
             <a href="http://somelink">http://somelink</a>
             <a href="http://anotherlink">http://anotherlink</a>
         """)
-

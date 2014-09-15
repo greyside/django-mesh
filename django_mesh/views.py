@@ -104,11 +104,7 @@ def self_enrollment(request, *args, **kwargs):
     user = request.user
     if request.method == 'POST':
         channel = get_object_or_404(Channel.objects.get_for_user(user), slug=kwargs['slug'])
-        if channel.enrollment == Channel.ENROLLMENTS.SELF:
-            channel.followers.add(user)
-            return HttpResponseRedirect(reverse('mesh_channel_index'))
-        else:
-            return HttpResponseRedirect(reverse('mesh_channel_index'))
+        channel.followers.add(user)
+        return HttpResponseRedirect(reverse('mesh_channel_index'))
     else:
         return HttpResponseRedirect(reverse('mesh_channel_index'))
-

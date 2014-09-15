@@ -152,4 +152,3 @@ class BaseTestCase(TestCase):
         #FIXME: dqc doesn't intercept db destruction or rollback
         cache.clear()
         models.oembed_regex = self._old_oembed_regex
-
