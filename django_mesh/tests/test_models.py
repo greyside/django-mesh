@@ -62,3 +62,32 @@ class TestPost(BaseTestCase):
             <a href="http://anotherlink">http://anotherlink</a>
         """)
 
+    def test_get_absolute_url(self):
+        self.c1.save()
+        self.p1.channel = self.c1
+        url = self.p1.get_absolute_url()
+
+        self.assertGreater(len,0)
+
+    def test_str_unicode(self):
+        self.c1.save()
+        self.p1.channel = self.c1
+        self.p1.save()
+
+        returnedTitle = str(self.p1)
+
+        self.assertEqual(self.p1.title, returnedTitle)
+
+class TestChannel(BaseTestCase):
+    def test_get_absolute_url(self):
+        self.c1.save()
+        url = self.c1.get_absolute_url()
+
+        self.assertGreater(len,0)
+
+    def test_str_unicode(self):
+        self.c1.save()
+
+        returnedTitle = str(self.c1)
+
+        self.assertEqual(self.c1.title, returnedTitle)

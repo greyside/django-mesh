@@ -15,10 +15,12 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Python imports
+from __future__ import unicode_literals
 import re
 
 # Django imports
 #from django.contrib.sitemaps import ping_google
+from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
@@ -34,6 +36,7 @@ from .managers import PostQuerySet, ChannelQuerySet
 
 oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 
+@python_2_unicode_compatible
 class _Abstract(models.Model):     #microblog compatible.
     slug = models.SlugField(unique=True)
     title = models.CharField(max_length=140, unique=True)
@@ -59,7 +62,7 @@ class _Abstract(models.Model):     #microblog compatible.
 #            # Bare 'except' because we could get a variety of HTTP-related exceptions.
 #            pass
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
         
     class Meta:

@@ -134,3 +134,4 @@ class BaseTestCase(TestCase):
         cache.clear()
         models.oembed_regex = self._old_oembed_regex
 
+
