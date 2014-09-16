@@ -2,6 +2,9 @@
 {% block content %}
 
 <div class="post_list">
+{% if post_list %}
+{% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
+{% endif %}
     {% for post in post_list %}
         <div>
             <a href="{% url 'mesh_post_view' slug=post.slug %}">{{ post.title }}</a>
@@ -12,7 +15,6 @@
         There are no posts to display.
     {% endfor %}
 
-{% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
 </div>
 
 {% if request.user.is_authenticated %} 
