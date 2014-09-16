@@ -67,7 +67,7 @@ class TestPost(BaseTestCase):
         self.p1.channel = self.c1
         url = self.p1.get_absolute_url()
 
-        self.assertGreater(len,0)
+        self.assertGreater(len(url),0)
 
     def test_str_unicode(self):
         self.c1.save()
@@ -83,7 +83,7 @@ class TestChannel(BaseTestCase):
         self.c1.save()
         url = self.c1.get_absolute_url()
 
-        self.assertGreater(len,0)
+        self.assertGreater(len(url),0)
 
     def test_str_unicode(self):
         self.c1.save()
