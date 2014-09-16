@@ -53,4 +53,3 @@ setup(name='django-mesh',
 
     test_suite='setup.runtests',
 )
-

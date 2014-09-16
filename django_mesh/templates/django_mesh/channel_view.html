@@ -2,17 +2,17 @@
 {% block content %}
 
 <div class="post_list">
+    {% for post in post_list %}
+        <div>
+            <a href="{% url 'mesh_post_view' slug=post.slug %}">{{ post.title }}</a>
+            <p class="summary">{{ post.summary }}</p>
+        </div>
 
-{% for post in post_list %}
-	<div>
-		<a href="{% url 'mesh_post_view' slug=post.slug %}">{{ post.title }}</a>
-		<p class="summary">{{ post.summary }}</p>
-	</div>
-{% empty %}
-	There are no posts to display.
-{% endfor %}
+    {% empty %}
+        There are no posts to display.
+    {% endfor %}
+
 {% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
-
 </div>
 
 {% if request.user.is_authenticated %} 
@@ -37,7 +37,3 @@
 {% endif %}
 
 {% endblock content %}
-
-
-
-

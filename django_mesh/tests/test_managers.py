@@ -32,10 +32,9 @@ class PostQuerySetTestCase(BaseTestCase):
 
         active_posts = Post.objects.active()
 
-        assert self.p1 in active_posts
-
-        assert self.p2 not in active_posts
-        assert self.p3 not in active_posts
+        self.assertIn(self.p1, active_posts)
+        self.assertNotIn(self.p2, active_posts)
+        self.assertNotIn(self.p3, active_posts)
 
     def test_get_for_user(self):
         user = self.user
@@ -60,11 +59,11 @@ class PostQuerySetTestCase(BaseTestCase):
 
         viewable = Post.objects.get_for_user(user)
 
-        assert self.p1 in viewable
-        assert self.p2 in viewable
-        assert self.p4 in viewable
+        self.assertIn(self.p1, viewable)
+        self.assertIn(self.p2, viewable)
+        self.assertIn(self.p4, viewable)
 
-        assert self.p5 not in viewable
+        self.assertNotIn(self.p5, viewable)
 
     def test_get_for_user_not_following_channel(self):
         user = self.user
@@ -87,11 +86,11 @@ class PostQuerySetTestCase(BaseTestCase):
 
         viewable = Post.objects.get_for_user(user)
 
-        assert self.p1 in viewable
-        assert self.p4 in viewable
+        self.assertIn(self.p1, viewable)
+        self.assertIn(self.p4, viewable)
 
-        assert self.p2 not in viewable
-        assert self.p5 not in viewable
+        self.assertNotIn(self.p2, viewable)
+        self.assertNotIn(self.p5, viewable)
 
 class ChannelQuerySetTestCase(BaseTestCase):
     def test_get_for_user(self):
@@ -111,13 +110,13 @@ class ChannelQuerySetTestCase(BaseTestCase):
 
         viewable = Channel.objects.get_for_user(user)
 
-        assert self.following_public_channel in viewable
-        assert self.following_private_channel in viewable
-        assert self.not_following_public_channel in viewable
-        assert self.not_following_private_channel in viewable
-        assert self.private_self_enroll in viewable
+        self.assertIn(self.following_public_channel, viewable)
+        self.assertIn(self.following_private_channel, viewable)
+        self.assertIn(self.not_following_public_channel, viewable)
+        self.assertIn(self.not_following_private_channel, viewable)
+        self.assertIn(self.private_self_enroll, viewable)
 
-        assert self.private_author_enroll not in viewable
+        self.assertNotIn(self.private_author_enroll, viewable)
 
     def test_get_for_user_anonymous(self):
         user = self.user
@@ -133,10 +132,10 @@ class ChannelQuerySetTestCase(BaseTestCase):
 
         viewable = Channel.objects.get_for_user(user)
 
-        assert self.following_public_channel in viewable
-        assert self.not_following_public_channel in viewable
+        self.assertIn(self.following_public_channel, viewable)
+        self.assertIn(self.not_following_public_channel, viewable)
 
-        assert self.following_private_channel not in viewable
-        assert self.not_following_private_channel not in viewable
-        assert self.private_author_enroll not in viewable
-        assert self.private_self_enroll not in viewable
+        self.assertNotIn(self.following_private_channel, viewable)
+        self.assertNotIn(self.not_following_private_channel, viewable)
+        self.assertNotIn(self.private_self_enroll, viewable)
+        self.assertNotIn(self.private_author_enroll, viewable)
