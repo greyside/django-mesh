@@ -21,8 +21,7 @@ from django.core.urlresolvers import reverse
 from .util import BaseTestCase
 
 # App imports
-from .. import models
-from ..models import Channel, Post
+from ..models import Post
 
 class IndexViewTestCase(BaseTestCase):
 
@@ -515,21 +514,20 @@ class PaginationTestCase(BaseTestCase):
     def test_many_pages(self):
 
         self.c1.save()
-        x = 0
-        while x < 52:
+        for i in range(0, 51):
 
-            self.x = Post(
-            author=self.user,
-            slug="this-is-post-number-{0}".format(x),
-            title="this-is-post-number-{0}".format(x),
-            text="this-is-post-number-{0}".format(x),
-            status=Post.STATUSES.PUBLISHED
+            post = Post(
+                author=self.user,
+                slug="this-is-post-number-{0}".format(i),
+                title="this-is-post-number-{0}".format(i),
+                text="this-is-post-number-{0}".format(i),
+                status=Post.STATUSES.PUBLISHED
             )
-            self.x.channel = self.c1
-            self.x.save()
-            x = x + 1
+
+            post.channel = self.c1
+            post.save()
 
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug': self.c1.slug}))
-        self.assertGreater(self.x, 50)
+        self.assertGreater(Post.objects.count(), 50)
 
         self.assertContains(response, 'Page 1 of 2')
