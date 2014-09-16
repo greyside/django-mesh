@@ -23,7 +23,7 @@
             {% empty %}
                 <form id="category_form" method="post" action="{% url 'mesh_sub' slug=channel.slug %}">
                     {% csrf_token %}
-                    <input type="submit" name="submit" value="FOLLOW channel" />
+                    <input type="submit" name="submit" value="Follow Channel" />
                 </form>
             {% endfor %}
         </div>
