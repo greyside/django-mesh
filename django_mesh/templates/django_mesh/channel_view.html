@@ -15,17 +15,22 @@
 
 </div>
 
-{% if request.user.is_authenticated %}
+{% if request.user.is_authenticated %} 
+    {% if request.user in channel.followers.all %}
+        you are a follower
 
-    <div class="channel_list">
-        {% for channel in channel_list %}
-        {% empty %}
-            <form id="category_form" method="post" action="{% url 'mesh_sub' slug=channel.slug %}">
-                {% csrf_token %}
-                <input type="submit" name="submit" value="subscribe to channel button" />
-            </form>
-        {% endfor %}
-    </div>
+    {% else %}
+
+        <div class="channel_list">
+            {% for channel in channel_list %}
+            {% empty %}
+                <form id="category_form" method="post" action="{% url 'mesh_sub' slug=channel.slug %}">
+                    {% csrf_token %}
+                    <input type="submit" name="submit" value="subscribe to channel button" />
+                </form>
+            {% endfor %}
+        </div>
+    {% endif %}
 
 {% else %}
     Please log in to subscribe
