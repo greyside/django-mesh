@@ -12,6 +12,7 @@
 {% if comment_list %}
 {% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
 {% endif %}
+
     {% get_comment_list for post as comment_list %}
     {% for comment in comment_list %}
         <div>

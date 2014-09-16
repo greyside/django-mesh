@@ -20,6 +20,10 @@ from django.core.urlresolvers import reverse
 # Test imports
 from .util import BaseTestCase
 
+# App imports
+from .. import models
+from ..models import Channel, Post
+
 class IndexViewTestCase(BaseTestCase):
 
     def test_empty(self):
@@ -492,3 +496,40 @@ class SelfEnrollmentTestCase(BaseTestCase):
         self.client.post(reverse('mesh_sub', kwargs={'slug':self.c1.slug}))
         count = self.c1.followers.count()
         self.assertEqual(count, 1)
+
+class PaginationTestCase(BaseTestCase):
+    def test_pagination_navigation_with_posts(self):
+
+        self.c1.save()
+        self.p1.channel = self.c1
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view',kwargs={'slug': self.c1.slug}))
+        self.assertContains(response, 'Page 1 of 1')
+
+    def test_empty(self):
+
+        response = self.client.get(reverse('mesh_channel_index'))
+        self.assertNotContains(response, 'Page 1')
+
+    def test_many_pages(self):
+
+        self.c1.save()
+        x = 0
+        while x < 52:
+
+            self.x = Post(
+            author=self.user,
+            slug="this-is-post-number-{0}".format(x),
+            title="this-is-post-number-{0}".format(x),
+            text="this-is-post-number-{0}".format(x),
+            status=Post.STATUSES.PUBLISHED
+            )
+            self.x.channel = self.c1
+            self.x.save()
+            x = x + 1
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug': self.c1.slug}))
+        self.assertGreater(self.x, 50)
+
+        self.assertContains(response, 'Page 1 of 2')
