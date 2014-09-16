@@ -22,6 +22,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, HttpResponse
 
 # App imports
 from .models import Channel, Post
@@ -38,7 +40,6 @@ class IndexView(ListView):
         ret = super(IndexView, self).get_queryset(*args, **kwargs)
         return ret.get_for_user(user=self.request.user).active()
 
-
 class ChannelIndexView(ListView):
     model = Channel
     template_name = 'django_mesh/channel_index.html'
@@ -49,17 +50,30 @@ class ChannelIndexView(ListView):
         qs = super(ChannelIndexView, self).get_queryset(*args, **kwargs)
         return qs.get_for_user(self.request.user)
 
-
 class ChannelDetailView(ListView):
     model = Post
     template_name = 'django_mesh/channel_view.html'
     context_object_name = 'post_list'
     paginate_by = 50
 
+    def dispatch(self, request, *args, **kwargs):
+        self.channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+        response = super(ChannelDetailView, self).dispatch(request, *args, **kwargs)
+        return response
+
     def get_queryset(self, *args, **kwargs):
+        user = self.request.user
         ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
-        c = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
-        return ret.filter(channel=c).active()
+
+        if ((self.channel.public) or (user in self.channel.followers.all())):
+            return ret.filter(channel=self.channel).active()
+        else:
+            return ret.none()
+
+    def get_context_data(self, **kwargs):
+        context = super(ChannelDetailView, self).get_context_data(**kwargs)
+        context['channel'] = self.channel
+        return context
 
 class PostIndexView(ListView):
     model = Post
@@ -85,3 +99,12 @@ class PostCommentsView(DetailView):
     template_name = 'django_mesh/post_comments.html'
     context_object_name = 'post'
     paginate_by = 50
+
+def self_enrollment(request, *args, **kwargs):
+    user = request.user
+    if request.method == 'POST':
+        channel = get_object_or_404(Channel.objects.get_for_user(user), slug=kwargs['slug'])
+        channel.followers.add(user)
+        return HttpResponseRedirect(reverse('mesh_channel_index'))
+    else:
+        return HttpResponseRedirect(reverse('mesh_channel_index'))

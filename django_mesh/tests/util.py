@@ -42,37 +42,57 @@ class BaseTestCase(TestCase):
         self.c1 = Channel(
             slug='public',
             title='Public',
-            public=True,
+            public=True
         )
 
         self.c2 = Channel(
             slug='another-channel',
             title='Another Channel',
-            public=True,
+            public=True
+        )
+
+        self.c3 = Channel(
+            slug='yet-another-channel!',
+            title='Yet Another Channel!',
+            public=False
         )
 
         self.following_public_channel = Channel(
             slug='following-public',
             title='following public',
-            public=True,
+            public=True
         )
 
         self.following_private_channel = Channel(
             slug='following-private',
             title='Following private',
-            public=False,
+            public=False
         )
 
         self.not_following_public_channel = Channel(
             slug='not-following-public',
             title='Not following public',
-            public=True,
+            public=True
         )
 
         self.not_following_private_channel = Channel(
             slug='not-following-private',
             title='not following private',
+            public=False
+        )
+
+        self.private_self_enroll = Channel(
+            slug='private-self-enroll',
+            title='private self enroll should show up',
             public=False,
+            enrollment=Channel.ENROLLMENTS.SELF
+        )
+
+        self.private_author_enroll = Channel(
+            slug='private-author-enroll',
+            title='private author enroll should not show up if not allowed',
+            public=False,
+            enrollment=Channel.ENROLLMENTS.AUTHOR
         )
 
         self.p1 = Post(
@@ -125,12 +145,10 @@ class BaseTestCase(TestCase):
         self.comment1 = Comment(
             site=Site.objects.get_current(),
             user=self.user,
-            comment='Thanks for sharing.',
-        
+            comment='Thanks for sharing.'
         )
 
     def tearDown(self):
         #FIXME: dqc doesn't intercept db destruction or rollback
         cache.clear()
         models.oembed_regex = self._old_oembed_regex
-

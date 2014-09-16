@@ -21,6 +21,7 @@ from django.core.urlresolvers import reverse
 from .util import BaseTestCase
 
 class IndexViewTestCase(BaseTestCase):
+
     def test_empty(self):
 
         response = self.client.get(reverse('mesh_index'))
@@ -38,13 +39,13 @@ class IndexViewTestCase(BaseTestCase):
         self.p3.save()
 
         response = self.client.get(reverse('mesh_index'))
-        self.assertEqual(response.status_code, 200)
 
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
 
-    def test_what_posts_user_sees(self):
+    def test_what_posts_user_sees_when_logged_in(self):
         self.client.login(username='test_user', password='foobar')
         user = self.user
 
@@ -67,27 +68,26 @@ class IndexViewTestCase(BaseTestCase):
         self.p5.save()
 
         response = self.client.get(reverse('mesh_index'))
-        self.assertEqual(response.status_code, 200)
 
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
         self.assertContains(response, self.p6.title)
         self.assertContains(response, self.p4.title)
         self.assertNotContains(response, self.p5.title)
 
-    def test_what_posts_anon_sees(self):
-        user = self.user
+    def test_what_posts_is_seen_when_logged_out(self):
 
         self.following_public_channel.save()
         self.p1.channel = self.following_public_channel
         self.p1.save()
 
-        self.following_private_channel.save()
-        self.p6.channel = self.following_private_channel
-        self.p6.save()
-
         self.not_following_public_channel.save()
         self.p4.channel = self.not_following_public_channel
         self.p4.save()
+
+        self.following_private_channel.save()
+        self.p6.channel = self.following_private_channel
+        self.p6.save()
 
         self.not_following_private_channel.save()
         self.p5 = self.not_following_private_channel
@@ -97,11 +97,13 @@ class IndexViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
 
         self.assertContains(response, self.p1.title)
-        self.assertNotContains(response, self.p6.title)
         self.assertContains(response, self.p4.title)
+
+        self.assertNotContains(response, self.p6.title)
         self.assertNotContains(response, self.p5.title)
 
 class ChannelIndexViewTestCase(BaseTestCase):
+
     def test_index_empty(self):
         response = self.client.get(reverse('mesh_channel_index'))
 
@@ -116,12 +118,15 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.c1.title)
 
-    def test_what_channel_anony_sees(self):
+    def test_what_channel_users_logged_out_can_see(self):
 
         self.not_following_public_channel.save()
-        self.not_following_private_channel.save()
         self.following_public_channel.save()
+
+        self.not_following_private_channel.save()
         self.following_private_channel.save()
+        self.private_author_enroll.save()
+        self.private_self_enroll.save()
 
         response = self.client.get(reverse('mesh_channel_index'))
         self.assertEqual(response.status_code, 200)
@@ -131,20 +136,24 @@ class ChannelIndexViewTestCase(BaseTestCase):
 
         self.assertNotContains(response, self.not_following_private_channel.title)
         self.assertNotContains(response, self.following_private_channel.title)
+        self.assertNotContains(response, self.private_author_enroll.title)
+        self.assertNotContains(response, self.private_self_enroll.title)
 
-
-    def test_what_channel_user_sees(self):
+    def test_what_channel_users_who_are_logged_in_can_see(self):
         self.client.login(username='test_user', password='foobar')
         user = self.user
 
-
         self.not_following_public_channel.save()
         self.not_following_private_channel.save()
-        self.following_public_channel.save()
-        self.following_private_channel.save()
 
+        self.following_public_channel.save()
         self.following_public_channel.followers.add(user)
+
+        self.following_private_channel.save()
         self.following_private_channel.followers.add(user)
+
+        self.private_self_enroll.save()
+        self.private_author_enroll.save()
 
         response = self.client.get(reverse('mesh_channel_index'))
         self.assertEqual(response.status_code, 200)
@@ -152,10 +161,49 @@ class ChannelIndexViewTestCase(BaseTestCase):
         self.assertContains(response, self.not_following_public_channel.title)
         self.assertContains(response, self.following_public_channel.title)
         self.assertContains(response, self.following_private_channel.title)
-        self.assertNotContains(response, self.not_following_private_channel.title)
+        self.assertContains(response, self.not_following_private_channel.title)
+        self.assertContains(response, self.private_self_enroll.title)
 
+        self.assertNotContains(response, self.private_author_enroll.title)
 
 class ChannelDetailViewTestCase(BaseTestCase):
+
+    def test_subscribe_button_doesnt_shows_up_for_logged_out_user(self):
+        user=self.user
+
+        self.c1.save()
+        self.c3.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "subscribe to channel button")
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_subscribe_button_shows_up_for_logged_in_user(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+        self.c3.save()
+        self.private_author_enroll.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "subscribe to channel button")
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "subscribe to channel button")
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.private_author_enroll.slug}))
+
+        self.assertEqual(response.status_code, 404)
+
     def test_view_empty(self):
         self.c1.save()
 
@@ -198,6 +246,76 @@ class ChannelDetailViewTestCase(BaseTestCase):
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
 
+    def test_available_post_for_logged_in_user(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+        self.p1.channel = self.c1
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)
+
+        self.c3.save()
+        self.p1.channel = self.c3
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, self.p1.title)
+
+        self.c3.followers.add(user)
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)
+
+        self.private_author_enroll.save()
+        self.p1.channel = self.private_author_enroll
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.private_author_enroll.slug}))
+
+        self.assertEqual(response.status_code, 404)
+
+        self.private_author_enroll.followers.add(user)
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.private_author_enroll.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)
+
+    def test_available_post_for_logged_out_user(self):
+        self.c1.save()
+        self.p1.channel = self.c1
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)
+
+        self.c3.save()
+        self.p1.channel = self.c3
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+
+        self.assertEqual(response.status_code, 404)
+
+        self.private_author_enroll.save()
+        self.p1.channel = self.private_author_enroll
+        self.p1.save()
+
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.private_author_enroll.slug}))
+
+        self.assertEqual(response.status_code, 404)
+
 class PostIndexViewTestCase(BaseTestCase):
     def test_index_empty(self):
         response = self.client.get(reverse('mesh_post_index'))
@@ -218,10 +336,11 @@ class PostIndexViewTestCase(BaseTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
+
         self.assertNotContains(response, self.p2.title)
         self.assertNotContains(response, self.p3.title)
 
-    def test_what_posts_user_sees(self):
+    def test_what_logged_in_users_can_see(self):
         self.client.login(username='test_user', password='foobar')
         user = self.user
 
@@ -251,20 +370,18 @@ class PostIndexViewTestCase(BaseTestCase):
         self.assertContains(response, self.p4.title)
         self.assertNotContains(response, self.p5.title)
 
-    def test_what_posts_anon_sees(self):
-        user = self.user
-
+    def test_what_logged_out_user_can_see(self):
         self.following_public_channel.save()
         self.p1.channel = self.following_public_channel
         self.p1.save()
 
-        self.following_private_channel.save()
-        self.p6.channel = self.following_private_channel
-        self.p6.save()
-
         self.not_following_public_channel.save()
         self.p4.channel = self.not_following_public_channel
         self.p4.save()
+
+        self.following_private_channel.save()
+        self.p6.channel = self.following_private_channel
+        self.p6.save()
 
         self.not_following_private_channel.save()
         self.p5 = self.not_following_private_channel
@@ -274,10 +391,10 @@ class PostIndexViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
 
         self.assertContains(response, self.p1.title)
-        self.assertNotContains(response, self.p6.title)
         self.assertContains(response, self.p4.title)
-        self.assertNotContains(response, self.p5.title)
 
+        self.assertNotContains(response, self.p6.title)
+        self.assertNotContains(response, self.p5.title)
 
 class PostDetailViewTestCase(BaseTestCase):
     def test_post_view(self):
@@ -286,6 +403,7 @@ class PostDetailViewTestCase(BaseTestCase):
         self.p1.save()
         self.comment1.content_object = self.p1
         self.comment1.save()
+
         self.p2.channel = self.c1
         self.p2.published = self.p1.published
         self.p2.save()
@@ -295,6 +413,7 @@ class PostDetailViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
         self.assertContains(response, self.comment1.comment)
+
         self.assertNotContains(response, self.p2.title)
 
 class PostCommentsViewTestCase(BaseTestCase):
@@ -304,6 +423,7 @@ class PostCommentsViewTestCase(BaseTestCase):
         self.p1.save()
         self.comment1.content_object = self.p1
         self.comment1.save()
+
         self.p2.channel = self.c1
         self.p2.published = self.p1.published
         self.p2.save()
@@ -313,4 +433,52 @@ class PostCommentsViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
         self.assertContains(response, self.comment1.comment)
+
         self.assertNotContains(response, self.p2.title)
+
+class SelfEnrollmentTestCase(BaseTestCase):
+
+    def test_get_request_redirects_to_mesh_channel_index(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+
+        response = self.client.get(reverse('mesh_sub',kwargs={'slug': self.c1.slug}))
+        self.assertRedirects(response, reverse('mesh_channel_index'), status_code=302)
+
+    def test_post_request_lets_subscribe_to_self_enrollment_channel(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c3.save()
+        self.p1.channel = self.c3
+        self.p1.save()
+
+        self.client.post(reverse('mesh_sub', kwargs={'slug':self.c3.slug}))
+
+        response = self.client.get(reverse('mesh_channel_view',kwargs={'slug': self.c3.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1.title)
+
+    def test_manually_entering_author_enrollment_only_channel_throws_404_error(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.private_author_enroll.save()
+
+        response = self.client.post(reverse('mesh_sub', kwargs={'slug':self.private_author_enroll.slug}))
+        self.assertEqual(response.status_code, 404)
+        followers = self.private_author_enroll.followers.all()
+        self.assertNotIn(user, followers)
+
+    def test_enrolling_twice_into_one_channel_will_not_double_count(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+        self.c1.followers.add(user)
+        self.client.post(reverse('mesh_sub', kwargs={'slug':self.c1.slug}))
+        count = self.c1.followers.count()
+        self.assertEqual(count, 1)
