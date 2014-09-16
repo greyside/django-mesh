@@ -23,4 +23,3 @@ Huboard
 -------
 
 https://huboard.com/SeanHayes/django-mesh/
-
