@@ -1,5 +1,6 @@
 {% extends "django_mesh/base.html" %}
 {% block content %}
+
 <div class="post_list">
 
 {% for post in post_list %}
@@ -11,5 +12,27 @@
 	There are no posts to display.
 {% endfor %}
 {% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
+
 </div>
+
+{% if request.user.is_authenticated %}
+
+    <div class="channel_list">
+        {% for channel in channel_list %}
+        {% empty %}
+            <form id="category_form" method="post" action="{% url 'mesh_sub' slug=channel.slug %}">
+                {% csrf_token %}
+                <input type="submit" name="submit" value="subscribe to channel button" />
+            </form>
+        {% endfor %}
+    </div>
+
+{% else %}
+    Please log in to subscribe
+{% endif %}
+
 {% endblock content %}
+
+
+
+

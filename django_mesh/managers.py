@@ -22,7 +22,7 @@ from django.db.models import Q
 
 class PostQuerySet(QuerySet):
     def active(self):
-        return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now())
+        return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now()).distinct()
 
     def get_for_user(self, user):
         if user.id == None:
@@ -35,6 +35,4 @@ class ChannelQuerySet(QuerySet):
         if user.id == None:
             return self.filter(public=True)
         else:
-            return self.filter(Q(public=True) | Q(followers=user))
-
-
+            return self.filter(Q(public=True) | Q(followers=user) | Q(enrollment=self.model.ENROLLMENTS.SELF)).distinct()

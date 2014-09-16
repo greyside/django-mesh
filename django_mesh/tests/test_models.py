@@ -56,7 +56,7 @@ class TestPost(BaseTestCase):
         self.c1.save()
         self.p1.channel = self.c1
         self.p1.save()
-        
+
         self.assertEqual(self.p1.rendered_text, """foo
             <a href="http://somelink">http://somelink</a>
             <a href="http://anotherlink">http://anotherlink</a>
