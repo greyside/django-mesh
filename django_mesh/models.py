@@ -85,9 +85,6 @@ class Channel(_Abstract):
     def get_absolute_url(self):
         return reverse('mesh_channel_view', args=(self.slug,))
 
-    def can_author(self, user):
-        return user in self.authors.all()
-
     class Meta:
         ordering = ['title']
 
@@ -126,7 +123,7 @@ class Post(_Abstract):
     summary = property(_get_summary)
 
     def get_absolute_url(self):
-        return reverse('mesh_post_view', args = (self.slug,))
+        return reverse('mesh_post_view', args=(self.slug,))
 
     class Meta:
         ordering = ['published']
