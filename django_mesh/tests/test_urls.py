@@ -204,6 +204,17 @@ class ChannelDetailViewTestCase(BaseTestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_subscribe_button_doesnt_show_up_when_already_subscribed(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c3.save()
+        self.c3.followers.add(user)
+        response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
+
+        self.assertNotContains(response, 'subscribe to channel')
+        self.assertContains(response, 'you are a follower')
+
     def test_view_empty(self):
         self.c1.save()
 
