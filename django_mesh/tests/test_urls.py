@@ -177,7 +177,7 @@ class ChannelDetailViewTestCase(BaseTestCase):
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "subscribe to channel button")
+        self.assertNotContains(response, "Follow Channel")
 
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
         self.assertEqual(response.status_code, 404)
@@ -193,12 +193,12 @@ class ChannelDetailViewTestCase(BaseTestCase):
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c1.slug}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "subscribe to channel button")
+        self.assertContains(response, "Follow Channel")
 
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "subscribe to channel button")
+        self.assertContains(response, "Follow Channel")
 
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.private_author_enroll.slug}))
 
@@ -212,8 +212,7 @@ class ChannelDetailViewTestCase(BaseTestCase):
         self.c3.followers.add(user)
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
 
-        self.assertNotContains(response, 'subscribe to channel')
-        self.assertContains(response, 'you are a follower')
+        self.assertNotContains(response, 'Follow Channel')
 
     def test_view_empty(self):
         self.c1.save()
