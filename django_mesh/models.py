@@ -64,7 +64,7 @@ class _Abstract(models.Model):     #microblog compatible.
 
     def __str__(self):
         return self.title
-        
+
     class Meta:
         abstract = True
 

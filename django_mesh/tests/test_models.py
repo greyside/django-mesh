@@ -17,7 +17,7 @@
 # Test imports
 from .util import BaseTestCase
 
-class TestPost(BaseTestCase):
+class PostTestCase(BaseTestCase):
     def test_has_auto_summary(self):
         self.c1.save()
         self.p1.channel = self.c1
@@ -78,7 +78,7 @@ class TestPost(BaseTestCase):
 
         self.assertEqual(self.p1.title, returnedTitle)
 
-class TestChannel(BaseTestCase):
+class ChannelTestCase(BaseTestCase):
     def test_get_absolute_url(self):
         self.c1.save()
         url = self.c1.get_absolute_url()
