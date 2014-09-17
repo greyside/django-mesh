@@ -171,7 +171,7 @@ class ChannelIndexViewTestCase(BaseTestCase):
 
 class ChannelDetailViewTestCase(BaseTestCase):
 
-    def test_subscribe_button_doesnt_shows_up_for_logged_out_user(self):
+    def test_follow_button_doesnt_shows_up_for_logged_out_user(self):
         user=self.user
 
         self.c1.save()
@@ -185,7 +185,7 @@ class ChannelDetailViewTestCase(BaseTestCase):
         response = self.client.get(reverse('mesh_channel_view', kwargs={'slug':self.c3.slug}))
         self.assertEqual(response.status_code, 404)
 
-    def test_subscribe_button_shows_up_for_logged_in_user(self):
+    def test_follow_button_shows_up_for_logged_in_user(self):
         user = self.user
         self.client.login(username='test_user', password='foobar')
 
@@ -207,7 +207,7 @@ class ChannelDetailViewTestCase(BaseTestCase):
 
         self.assertEqual(response.status_code, 404)
 
-    def test_subscribe_button_doesnt_show_up_when_already_subscribed(self):
+    def test_follow_button_doesnt_show_up_when_already_following(self):
         user = self.user
         self.client.login(username='test_user', password='foobar')
 
@@ -457,10 +457,10 @@ class SelfEnrollmentTestCase(BaseTestCase):
 
         self.c1.save()
 
-        response = self.client.get(reverse('mesh_sub',kwargs={'slug': self.c1.slug}))
+        response = self.client.get(reverse('mesh_follow_channel',kwargs={'slug': self.c1.slug}))
         self.assertRedirects(response, reverse('mesh_channel_index'), status_code=302)
 
-    def test_post_request_lets_subscribe_to_self_enrollment_channel(self):
+    def test_post_request_lets_user_follow_self_enrollment_channel(self):
         user = self.user
         self.client.login(username='test_user', password='foobar')
 
@@ -468,7 +468,7 @@ class SelfEnrollmentTestCase(BaseTestCase):
         self.p1.channel = self.c3
         self.p1.save()
 
-        self.client.post(reverse('mesh_sub', kwargs={'slug':self.c3.slug}))
+        self.client.post(reverse('mesh_follow_channel', kwargs={'slug':self.c3.slug}))
 
         response = self.client.get(reverse('mesh_channel_view',kwargs={'slug': self.c3.slug}))
 
@@ -481,7 +481,7 @@ class SelfEnrollmentTestCase(BaseTestCase):
 
         self.private_author_enroll.save()
 
-        response = self.client.post(reverse('mesh_sub', kwargs={'slug':self.private_author_enroll.slug}))
+        response = self.client.post(reverse('mesh_follow_channel', kwargs={'slug':self.private_author_enroll.slug}))
         self.assertEqual(response.status_code, 404)
         followers = self.private_author_enroll.followers.all()
         self.assertNotIn(user, followers)
@@ -492,7 +492,7 @@ class SelfEnrollmentTestCase(BaseTestCase):
 
         self.c1.save()
         self.c1.followers.add(user)
-        self.client.post(reverse('mesh_sub', kwargs={'slug':self.c1.slug}))
+        self.client.post(reverse('mesh_follow_channel', kwargs={'slug':self.c1.slug}))
         count = self.c1.followers.count()
         self.assertEqual(count, 1)
 
