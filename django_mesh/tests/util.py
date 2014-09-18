@@ -28,7 +28,7 @@ from django.utils import timezone
 
 #App imports
 from .. import models
-from ..models import Channel, Post
+from ..models import Channel, Post, Tag
 
 class BaseTestCase(TestCase):
     def setUp(self):
@@ -146,6 +146,12 @@ class BaseTestCase(TestCase):
             site=Site.objects.get_current(),
             user=self.user,
             comment='Thanks for sharing.'
+        )
+
+        self.t1 = Tag(
+            slug='public-tag',
+            title='public-tag',
+            text='this is used to test a public tag'
         )
 
     def tearDown(self):

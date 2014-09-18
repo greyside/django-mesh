@@ -108,3 +108,33 @@ def self_enrollment(request, *args, **kwargs):
         return HttpResponseRedirect(reverse('mesh_channel_index'))
     else:
         return HttpResponseRedirect(reverse('mesh_channel_index'))
+
+class TagDetailView(ListView):
+    model = Post
+    template_name = 'django_mesh/tag_view.html'
+    context_object_name = 'post_list'
+    paginate_by = 50
+
+    # def dispatch(self, request, *args, **kwargs):
+    #     self.channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+    #     response = super(ChannelDetailView, self).dispatch(request, *args, **kwargs)
+    #     return response
+
+    # def get_queryset(self, *args, **kwargs):
+    #     user = self.request.user
+    #     ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
+
+    #     if ((self.channel.public) or (user in self.channel.followers.all())):
+    #         return ret.filter(channel=self.channel).active()
+    #     else:
+    #         return ret.none()
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(ChannelDetailView, self).get_context_data(**kwargs)
+    #     context['channel'] = self.channel
+    #     return context
+
+    # def tag_detail_view(request, *args, **kwargs):
+    # user = request.user
+    # if request.method == 'POST':
+    #     tag = get_object_or_404(Tag.objects.filter(tags=tags))

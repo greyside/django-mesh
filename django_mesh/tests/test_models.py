@@ -91,3 +91,14 @@ class ChannelTestCase(BaseTestCase):
         returnedTitle = str(self.c1)
 
         self.assertEqual(self.c1.title, returnedTitle)
+
+class TagTestCase(BaseTestCase):
+
+    def test_get_absolute_url(self):
+
+
+        self.t1.save()
+
+        url = self.t1.get_absolute_url()
+
+        self.assertGreater(len(url), 0)

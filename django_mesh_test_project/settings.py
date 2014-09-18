@@ -44,7 +44,6 @@ INSTALLED_APPS = (
     'django.contrib.comments',
     'django.contrib.sitemaps',
     'django.contrib.sites',
-    'taggit',
     #app that we want to test
     'django_mesh',
 )
