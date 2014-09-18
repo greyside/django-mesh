@@ -21,7 +21,6 @@ import re
 #Django imports
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.contrib.comments.models import Comment
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.utils import timezone
@@ -141,12 +140,6 @@ class BaseTestCase(TestCase):
             text='made public',
             status=Post.STATUSES.PUBLISHED
             )
-
-        self.comment1 = Comment(
-            site=Site.objects.get_current(),
-            user=self.user,
-            comment='Thanks for sharing.'
-        )
 
         self.t1 = Tag(
             slug='public-tag',

@@ -41,7 +41,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #dependencies
-    'django.contrib.comments',
     'django.contrib.sitemaps',
     'django.contrib.sites',
     #app that we want to test
