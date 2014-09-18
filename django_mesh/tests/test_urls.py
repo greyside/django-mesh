@@ -414,8 +414,6 @@ class PostDetailViewTestCase(BaseTestCase):
         self.c1.save()
         self.p1.channel = self.c1
         self.p1.save()
-        self.comment1.content_object = self.p1
-        self.comment1.save()
 
         self.p2.channel = self.c1
         self.p2.published = self.p1.published
@@ -425,29 +423,9 @@ class PostDetailViewTestCase(BaseTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
-        self.assertContains(response, self.comment1.comment)
 
         self.assertNotContains(response, self.p2.title)
 
-class PostCommentsViewTestCase(BaseTestCase):
-    def test_comments(self):
-        self.c1.save()
-        self.p1.channel = self.c1
-        self.p1.save()
-        self.comment1.content_object = self.p1
-        self.comment1.save()
-
-        self.p2.channel = self.c1
-        self.p2.published = self.p1.published
-        self.p2.save()
-
-        response = self.client.get(reverse('mesh_post_comments', kwargs={'slug': self.p1.slug}))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.p1.title)
-        self.assertContains(response, self.comment1.comment)
-
-        self.assertNotContains(response, self.p2.title)
 
 class SelfEnrollmentTestCase(BaseTestCase):
 
