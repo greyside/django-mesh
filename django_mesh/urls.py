@@ -16,7 +16,7 @@
 
 #Django imports
 from django.conf.urls import patterns, url
-from .views import IndexView, ChannelIndexView, ChannelDetailView, PostIndexView, PostDetailView, PostCommentsView
+from .views import IndexView, ChannelIndexView, ChannelDetailView, PostIndexView, PostDetailView
 from django_mesh import views
 
 urlpatterns = patterns('',
@@ -25,6 +25,5 @@ urlpatterns = patterns('',
     url(r'^channels/(?P<slug>.+)/$', ChannelDetailView.as_view(), name="mesh_channel_view"),
     url(r'^follow/(?P<slug>.+)/$', views.self_enrollment, name="mesh_follow_channel"),
     url(r'^posts/$', PostIndexView.as_view(), name="mesh_post_index"),
-    url(r'^posts/(?P<slug>.+)/comments/$', PostCommentsView.as_view(), name="mesh_post_comments"),
     url(r'^posts/(?P<slug>.+)/$', PostDetailView.as_view(), name="mesh_post_view"),
 )

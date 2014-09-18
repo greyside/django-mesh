@@ -94,12 +94,6 @@ class PostDetailView(DetailView):
         ret = super(PostDetailView, self).get_queryset(*args, **kwargs)
         return ret.get_for_user(user=self.request.user).active()
 
-class PostCommentsView(DetailView):
-    model = Post
-    template_name = 'django_mesh/post_comments.html'
-    context_object_name = 'post'
-    paginate_by = 50
-
 def self_enrollment(request, *args, **kwargs):
     user = request.user
     if request.method == 'POST':
