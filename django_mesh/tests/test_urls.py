@@ -426,6 +426,35 @@ class PostDetailViewTestCase(BaseTestCase):
 
         self.assertNotContains(response, self.p2.title)
 
+    def test_tags_on_post_detail_view_page(self):
+        self.c1.save()
+        self.p1.channel = self.c1
+
+        self.t1.save()
+        self.t2.save()
+        self.t3.save()
+
+        self.p1.save()
+        self.p1.tags.add(self.t1)
+        self.p1.tags.add(self.t2)
+
+        response = self.client.get(reverse('mesh_post_view', kwargs={'slug': self.p1.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.t1.title)
+        self.assertContains(response, self.t2.title)
+        self.assertNotContains(response, self.t3.title)
+
+    def test_tags_bring_to_tag_page(self):
+        self.c1.save()
+        self.p1.channel = self.c1
+        self.t1.save()
+        self.p1.save()
+        self.p1.tags.add(self.t1)
+
+        response = self.client.get(reverse('mesh_tag_view', kwargs={'slug': self.t1.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.t1.title)
+        self.assertContains(response, self.p1)
 
 class SelfEnrollmentTestCase(BaseTestCase):
 
@@ -509,3 +538,102 @@ class PaginationTestCase(BaseTestCase):
         self.assertGreater(Post.objects.count(), 50)
 
         self.assertContains(response, 'Page 1 of 2')
+
+class TagDetailViewTestCase(BaseTestCase):
+    def test_only_similar_posts_shows_up(self):
+
+        self.t1.save()
+        self.t2.save()
+
+        self.c1.save()
+        self.c3.save()
+
+        self.p1.channel = self.c1
+        self.p4.channel = self.c1
+        self.p5.channel = self.c1 # different tag than other two
+
+        self.p6.channel = self.c3 # private channel
+
+        self.p1.save()
+        self.p4.save()
+        self.p5.save()
+        self.p6.save()
+
+        self.p1.tags.add(self.t1)
+        self.p4.tags.add(self.t1)
+
+        self.p5.tags.add(self.t2)
+
+        self.p6.tags.add(self.t2)
+
+        response = self.client.get(reverse('mesh_tag_view', kwargs={'slug': self.t1.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1)
+        self.assertContains(response, self.p4)
+
+        self.assertNotContains(response, self.p5)
+        self.assertNotContains(response, self.p6)
+
+    def test_private_posts_dont_show_up_even_with_similar_tags(self):
+        self.t1.save()
+        self.t2.save()
+
+        self.c1.save()
+        self.c3.save()
+
+        self.p1.channel = self.c1
+        self.p4.channel = self.c1
+
+        self.p6.channel = self.c3 # private channel
+
+        self.p1.save()
+        self.p4.save()
+        self.p6.save()
+
+        self.p1.tags.add(self.t1)
+        self.p4.tags.add(self.t1)
+
+        self.p6.tags.add(self.t1)
+
+        response = self.client.get(reverse('mesh_tag_view', kwargs={'slug': self.t1.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1)
+        self.assertContains(response, self.p4)
+
+        self.assertNotContains(response, self.p6)
+
+    def test_private_posts_show_up_with_similar_tags_for_following_user(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.t1.save()
+        self.t2.save()
+
+        self.c1.save()
+        self.c3.save()
+        self.c3.followers.add(user)
+
+        self.p1.channel = self.c1
+        self.p4.channel = self.c1
+
+        self.p6.channel = self.c3 # private channel
+
+        self.p1.save()
+        self.p4.save()
+        self.p6.save()
+
+        self.p1.tags.add(self.t1)
+        self.p4.tags.add(self.t1)
+
+        self.p6.tags.add(self.t1)
+
+        response = self.client.get(reverse('mesh_tag_view', kwargs={'slug': self.t1.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.p1)
+        self.assertContains(response, self.p4)
+
+        self.assertContains(response, self.p6)
+
+    def test_tag_that_doesnt_exist_raises_404(self):
+        response = self.client.get(reverse('mesh_tag_view', kwargs={'slug': 'none'}))
+        self.assertEqual(response.status_code, 404)

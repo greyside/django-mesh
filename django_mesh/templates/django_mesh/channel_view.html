@@ -24,10 +24,7 @@
         <div class="channel_list">
             {% for channel in channel_list %}
             {% empty %}
-                <form id="category_form" method="post" action="{% url 'mesh_follow_channel' slug=channel.slug %}">
-                    {% csrf_token %}
-                    <input type="submit" name="submit" value="Follow Channel" />
-                </form>
+                {% include 'django_mesh/follow_channel.html' %}
             {% endfor %}
         </div>
     {% endif %}

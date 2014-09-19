@@ -1,0 +1,7 @@
+{% block follow %}
+<form id="category_form" method="post" action="{% url 'mesh_follow_channel' slug=channel.slug %}">
+    {% csrf_token %}
+
+    <input type="submit" name="submit" value="Follow Channel" />
+</form>
+{% endblock follow %}
