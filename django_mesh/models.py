@@ -90,8 +90,7 @@ class Channel(_Abstract):
 class Tag(_Abstract):
 
     def get_absolute_url(self):
-        return reverse('mesh_tag_view', args=(self.slug))
-
+        return reverse('mesh_tag_view', args=(self.slug,))
 
 class Post(_Abstract):
 
@@ -110,7 +109,7 @@ class Post(_Abstract):
     modified        = models.DateTimeField(auto_now=True, editable=False)
     published       = models.DateTimeField(default=timezone.now())
 
-    tags             = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag)
 
     objects = PassThroughManager.for_queryset_class(PostQuerySet)()
 

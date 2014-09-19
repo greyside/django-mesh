@@ -26,7 +26,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 
 # App imports
-from .models import Channel, Post
+from .models import Channel, Post, Tag
 
 logger = logging.getLogger(__name__)
 
@@ -109,26 +109,17 @@ class TagDetailView(ListView):
     context_object_name = 'post_list'
     paginate_by = 50
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     self.channel = get_object_or_404(Channel.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
-    #     response = super(ChannelDetailView, self).dispatch(request, *args, **kwargs)
-    #     return response
+    def dispatch(self, request, *args, **kwargs):
+        self.tags = get_object_or_404(Tag.objects.all(), slug=kwargs['slug'])
+        response = super(TagDetailView, self).dispatch(request, *args, **kwargs)
+        return response
 
-    # def get_queryset(self, *args, **kwargs):
-    #     user = self.request.user
-    #     ret = super(ChannelDetailView, self).get_queryset(*args, **kwargs)
+    def get_queryset(self, *args, **kwargs):
+        user = self.request.user
+        ret = super(TagDetailView, self).get_queryset(*args, **kwargs)
+        return ret.get_for_user(user).filter(tags=self.tags).distinct()
 
-    #     if ((self.channel.public) or (user in self.channel.followers.all())):
-    #         return ret.filter(channel=self.channel).active()
-    #     else:
-    #         return ret.none()
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(ChannelDetailView, self).get_context_data(**kwargs)
-    #     context['channel'] = self.channel
-    #     return context
-
-    # def tag_detail_view(request, *args, **kwargs):
-    # user = request.user
-    # if request.method == 'POST':
-    #     tag = get_object_or_404(Tag.objects.filter(tags=tags))
+    def get_context_data(self, **kwargs):
+        context = super(TagDetailView, self).get_context_data(**kwargs)
+        context['tag'] = self.tags
+        return context

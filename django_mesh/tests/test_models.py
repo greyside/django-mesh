@@ -75,30 +75,27 @@ class PostTestCase(BaseTestCase):
         self.p1.save()
 
         returnedTitle = str(self.p1)
-
         self.assertEqual(self.p1.title, returnedTitle)
 
 class ChannelTestCase(BaseTestCase):
     def test_get_absolute_url(self):
         self.c1.save()
         url = self.c1.get_absolute_url()
-
         self.assertGreater(len(url),0)
 
     def test_str_unicode(self):
         self.c1.save()
-
         returnedTitle = str(self.c1)
-
         self.assertEqual(self.c1.title, returnedTitle)
 
 class TagTestCase(BaseTestCase):
 
     def test_get_absolute_url(self):
-
-
         self.t1.save()
-
         url = self.t1.get_absolute_url()
-
         self.assertGreater(len(url), 0)
+
+    def test_str_unicode(self):
+        self.t1.save()
+        returnedTitle = str(self.t1)
+        self.assertEqual(self.t1.title, returnedTitle)
