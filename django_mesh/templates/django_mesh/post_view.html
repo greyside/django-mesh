@@ -1,11 +1,25 @@
 {% extends "django_mesh/base.html" %}
-
 {% block content %}
 
 <h2>{{ post.title }}</h2>
 
 <div class="post">
     {{ post.rendered_text }}
+</div>
+
+<div class="tag_list">
+{% if post.tags %}
+    <ul>
+        {% for tag in post.tags.all %}
+            <li>
+                <a href="{% url 'mesh_tag_view' slug=tag.slug %}">{{ tag.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+    There are no tags to display
+{% endif %}
 </div>
 
 {% endblock content %}
