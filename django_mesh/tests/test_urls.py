@@ -623,5 +623,26 @@ class TagDetailViewTestCase(BaseTestCase):
         self.assertContains(response, self.p6)
 
     def test_tag_that_doesnt_exist_raises_404(self):
-        response = self.client.get(reverse('mesh_tag_view', kwargs={'slug': 'none'}))
+        response = self.client.get(reverse('mesh_tag_view', kwargs={'slug': 'doesnt-exist'}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_going_to_tag_manually_raises_404_if_no_posts_exist_for_user(self):
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+        self.c3.save()
+        self.t1.save()
+        self.t3.save()
+
+        self.p1.channel = self.c1
+        self.p5.channel = self.c3
+
+        self.p1.save()
+        self.p5.save()
+
+        self.p1.tags.add(self.t1)
+        self.p5.tags.add(self.t3)
+
+        response = self.client.get(reverse('mesh_tag_view', kwargs={'slug':self.t3.slug}))
         self.assertEqual(response.status_code, 404)
