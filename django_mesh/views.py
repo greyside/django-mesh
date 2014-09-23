@@ -23,7 +23,7 @@ from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, Http404
 
 # App imports
 from .models import Channel, Post, Tag
@@ -110,16 +110,20 @@ class TagDetailView(ListView):
     paginate_by = 50
 
     def dispatch(self, request, *args, **kwargs):
-        self.tags = get_object_or_404(Tag.objects.all(), slug=kwargs['slug'])
+
+        self.tag = get_object_or_404(Tag.objects.all(), slug=kwargs['slug'])
         response = super(TagDetailView, self).dispatch(request, *args, **kwargs)
         return response
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
-        ret = super(TagDetailView, self).get_queryset(*args, **kwargs)
-        return ret.get_for_user(user).filter(tags=self.tags).distinct()
+        ret = super(TagDetailView, self).get_queryset(*args, **kwargs).get_for_user(user).filter(tags=self.tag).distinct()
+
+        if len(ret) == 0:
+            raise Http404
+        return ret
 
     def get_context_data(self, **kwargs):
         context = super(TagDetailView, self).get_context_data(**kwargs)
-        context['tag'] = self.tags
+        context['tag'] = self.tag
         return context

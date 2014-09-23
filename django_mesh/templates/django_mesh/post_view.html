@@ -8,7 +8,9 @@
 </div>
 
 <div class="tag_list">
-{% if post.tags %}
+
+{% if post.tags.all %}
+
     <ul>
         {% for tag in post.tags.all %}
             <li>

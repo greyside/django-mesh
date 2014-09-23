@@ -107,7 +107,7 @@ class Post(_Abstract):
     custom_summary  = models.TextField(default='')
     created         = models.DateTimeField(auto_now_add=True, editable=False)
     modified        = models.DateTimeField(auto_now=True, editable=False)
-    published       = models.DateTimeField(default=timezone.now())
+    published       = models.DateTimeField(default=timezone.now)
 
     tags = models.ManyToManyField(Tag)
 
