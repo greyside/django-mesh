@@ -29,7 +29,6 @@ from django.conf import settings
 # 3d party imports
 from model_utils import Choices
 from model_utils.managers import PassThroughManager
-from taggit.managers import TaggableManager
 
 # App imports
 from .managers import PostQuerySet, ChannelQuerySet
@@ -88,7 +87,13 @@ class Channel(_Abstract):
     class Meta:
         ordering = ['title']
 
+class Tag(_Abstract):
+
+    def get_absolute_url(self):
+        return reverse('mesh_tag_view', args=(self.slug,))
+
 class Post(_Abstract):
+
     SUMMARY_LENGTH = 50
 
     STATUSES = Choices(
@@ -102,10 +107,11 @@ class Post(_Abstract):
     custom_summary  = models.TextField(default='')
     created         = models.DateTimeField(auto_now_add=True, editable=False)
     modified        = models.DateTimeField(auto_now=True, editable=False)
-    published       = models.DateTimeField(default=timezone.now())
+    published       = models.DateTimeField(default=timezone.now)
+
+    tags = models.ManyToManyField(Tag)
 
     objects = PassThroughManager.for_queryset_class(PostQuerySet)()
-    tags            = TaggableManager()
 
     def _get_teaser(self):
         "A small excerpt of text that can be used in the absence of a custom summary."

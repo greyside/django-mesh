@@ -43,7 +43,6 @@ INSTALLED_APPS = (
     #dependencies
     'django.contrib.sitemaps',
     'django.contrib.sites',
-    'taggit',
     #app that we want to test
     'django_mesh',
 )
@@ -113,4 +112,3 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.SHA1PasswordHasher',
     'django.contrib.auth.hashers.MD5PasswordHasher',
 )
-

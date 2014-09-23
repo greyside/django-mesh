@@ -27,7 +27,7 @@ from django.utils import timezone
 
 #App imports
 from .. import models
-from ..models import Channel, Post
+from ..models import Channel, Post, Tag
 
 class BaseTestCase(TestCase):
     def setUp(self):
@@ -140,6 +140,24 @@ class BaseTestCase(TestCase):
             text='made public',
             status=Post.STATUSES.PUBLISHED
             )
+
+        self.t1 = Tag(
+            slug='public-1-slug',
+            title='public tag 1 title',
+            text='this is used to test a public tag'
+        )
+
+        self.t2 = Tag(
+            slug='public-2-slug',
+            title='public tag 2 title',
+            text='this is used to test a second public tag'
+        )
+
+        self.t3 = Tag(
+            slug='yet-another-tag-slug',
+            title='another tag title',
+            text='this is the text of another tag, t3'
+        )
 
     def tearDown(self):
         #FIXME: dqc doesn't intercept db destruction or rollback
