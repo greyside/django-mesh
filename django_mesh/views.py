@@ -110,6 +110,7 @@ class TagDetailView(ListView):
     paginate_by = 50
 
     def dispatch(self, request, *args, **kwargs):
+
         self.tag = get_object_or_404(Tag.objects.all(), slug=kwargs['slug'])
         response = super(TagDetailView, self).dispatch(request, *args, **kwargs)
         return response

@@ -20,12 +20,8 @@
 
 {% if request.user.is_authenticated %} 
     {% if request.user not in channel.followers.all %}
-
-        <div class="channel_list">
-            {% for channel in channel_list %}
-            {% empty %}
-                {% include 'django_mesh/follow_channel.html' %}
-            {% endfor %}
+        <div class="channel">
+            {% include 'django_mesh/follow_channel.html' %}
         </div>
     {% endif %}
 
