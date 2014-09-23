@@ -28,7 +28,6 @@ from django.conf import settings
 
 # 3d party imports
 from model_utils import Choices
-from model_utils.managers import PassThroughManager
 from taggit.managers import TaggableManager
 
 # App imports
@@ -80,7 +79,7 @@ class Channel(_Abstract):
 
     enrollment = models.IntegerField(max_length=1, default=ENROLLMENTS.SELF, choices=ENROLLMENTS)
 
-    objects = PassThroughManager.for_queryset_class(ChannelQuerySet)()
+    objects = ChannelQuerySet.as_manager()
 
     def get_absolute_url(self):
         return reverse('mesh_channel_view', args=(self.slug,))
@@ -104,7 +103,7 @@ class Post(_Abstract):
     modified        = models.DateTimeField(auto_now=True, editable=False)
     published       = models.DateTimeField(default=timezone.now())
 
-    objects = PassThroughManager.for_queryset_class(PostQuerySet)()
+    objects = PostQuerySet.as_manager()
     tags            = TaggableManager()
 
     def _get_teaser(self):
