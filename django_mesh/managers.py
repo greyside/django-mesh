@@ -36,3 +36,14 @@ class ChannelQuerySet(QuerySet):
             return self.filter(public=True)
         else:
             return self.filter(Q(public=True) | Q(followers=user) | Q(enrollment=self.model.ENROLLMENTS.SELF)).distinct()
+
+class TagQuerySet(QuerySet):
+    def get_for_user(self, user):
+
+        for_all_users = self.filter(post__channel__public=True).distinct()
+        for_authorized_user = self.filter(Q(post__channel__followers=user) | Q(post__author=user)).distinct()
+
+        if user.id == None:
+            return for_all_users
+        else:
+            return for_authorized_user | for_all_users

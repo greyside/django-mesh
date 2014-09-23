@@ -127,3 +127,12 @@ class TagDetailView(ListView):
         context = super(TagDetailView, self).get_context_data(**kwargs)
         context['tag'] = self.tag
         return context
+
+class TagIndexView(ListView):
+    model = Tag
+    template_name = 'django_mesh/tag_index.html'
+    context_object_name = 'tag_list'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(TagIndexView, self).get_queryset(*args, **kwargs)
+        return qs.get_for_user(self.request.user)
