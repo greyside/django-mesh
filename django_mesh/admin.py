@@ -18,12 +18,16 @@
 from django.contrib import admin
 
 # App imports
-from .models import Channel, Post
+from .models import Channel, Post, Tag
 
 class ChannelAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
 admin.site.register(Channel, ChannelAdmin)
+
+class TagAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("title",)}
+admin.site.register(Tag, TagAdmin)
 
 class PostAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
