@@ -15,7 +15,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # App imports
-from ..models import Post, Channel
+from ..models import Post, Channel, Tag
 
 # Test imports
 from .util import BaseTestCase
@@ -54,7 +54,7 @@ class PostQuerySetTestCase(BaseTestCase):
         self.p4.save()
 
         self.not_following_private_channel.save()
-        self.p5 = self.not_following_private_channel
+        self.p5.channel = self.not_following_private_channel
         self.p5.save()
 
         viewable = Post.objects.get_for_user(user)
@@ -81,7 +81,7 @@ class PostQuerySetTestCase(BaseTestCase):
         self.p2.save()
 
         self.not_following_private_channel.save()
-        self.p5 = self.not_following_private_channel
+        self.p5.channel = self.not_following_private_channel
         self.p5.save()
 
         viewable = Post.objects.get_for_user(user)
@@ -139,3 +139,65 @@ class ChannelQuerySetTestCase(BaseTestCase):
         self.assertNotIn(self.not_following_private_channel, viewable)
         self.assertNotIn(self.private_self_enroll, viewable)
         self.assertNotIn(self.private_author_enroll, viewable)
+
+class TagQuerySetTestCase(BaseTestCase):
+    def test_get_for_user_logged_out(self):
+        user = self.user
+
+        self.c1.save()
+        self.c2.save()
+        self.c3.save()
+
+        self.t1.save()
+        self.t2.save()
+        self.t3.save()
+
+        self.p1.channel = self.c1
+        self.p1.save()
+        self.p1.tags.add(self.t1)
+
+        self.p6.channel = self.c2
+        self.p6.save()
+        self.p6.tags.add(self.t2)
+
+        self.p5.channel = self.c3
+        self.p5.save()
+        self.p5.tags.add(self.t3)
+
+        viewable = Tag.objects.get_for_user(user)
+
+        self.assertIn(self.t1, viewable)
+        self.assertIn(self.t2, viewable)
+
+        self.assertNotIn(self.t3, viewable)
+
+    def test_get_for_user_following(self):
+        user = self.user
+
+        self.c1.save()
+        self.c2.save()
+        self.c3.save()
+        self.c3.followers.add(user)
+
+        self.t1.save()
+        self.t2.save()
+        self.t3.save()
+
+        self.p1.channel = self.c1
+        self.p1.save()
+        self.p1.tags.add(self.t1)
+
+        self.p6.channel = self.c2
+        self.p6.save()
+        self.p6.tags.add(self.t2)
+
+        self.p5.channel = self.c3
+        self.p5.save()
+        self.p5.tags.add(self.t3)
+
+        viewable = Tag.objects.get_for_user(user)
+
+        self.assertIn(self.t1, viewable)
+        self.assertIn(self.t2, viewable)
+
+        self.assertIn(self.t3, viewable)

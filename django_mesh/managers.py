@@ -40,10 +40,10 @@ class ChannelQuerySet(QuerySet):
 class TagQuerySet(QuerySet):
     def get_for_user(self, user):
 
-        for_all_users = self.filter(post__channel__public=True).distinct()
-        for_authorized_user = self.filter(Q(post__channel__followers=user) | Q(post__author=user)).distinct()
+        for_all_users = Q(post__channel__public=True)
+        for_authorized_user = Q(post__channel__followers=user.id) | for_all_users
 
         if user.id == None:
-            return for_all_users
+            return self.filter(for_all_users).distinct()
         else:
-            return for_authorized_user | for_all_users
+            return self.filter(for_authorized_user).distinct()
