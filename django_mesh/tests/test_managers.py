@@ -20,20 +20,22 @@ from ..models import Post, Channel, Tag
 # Test imports
 from .util import BaseTestCase
 
+from django.contrib.auth.models import User
+
 class PostQuerySetTestCase(BaseTestCase):
     def test_active(self):
         self.c1.save()
         self.p1.channel = self.c1
         self.p1.save()
-        self.p2.channel = self.c1
-        self.p2.save()
+        self.p7.channel = self.c1
+        self.p7.save()
         self.p3.channel = self.c1
         self.p3.save()
 
         active_posts = Post.objects.active()
 
         self.assertIn(self.p1, active_posts)
-        self.assertNotIn(self.p2, active_posts)
+        self.assertNotIn(self.p7, active_posts)
         self.assertNotIn(self.p3, active_posts)
 
     def test_get_for_user(self):
@@ -49,6 +51,9 @@ class PostQuerySetTestCase(BaseTestCase):
         self.p2.channel = self.following_private_channel
         self.p2.save()
 
+        self.p7.channel = self.following_private_channel
+        self.p7.save()
+
         self.not_following_public_channel.save()
         self.p4.channel = self.not_following_public_channel
         self.p4.save()
@@ -63,6 +68,8 @@ class PostQuerySetTestCase(BaseTestCase):
         self.assertIn(self.p2, viewable)
         self.assertIn(self.p4, viewable)
 
+        self.assertNotIn(self.p7, viewable)
+
         self.assertNotIn(self.p5, viewable)
 
     def test_get_for_user_not_following_channel(self):
@@ -71,6 +78,8 @@ class PostQuerySetTestCase(BaseTestCase):
         self.following_public_channel.save()
         self.p1.channel = self.following_public_channel
         self.p1.save()
+        self.p7.channel = self.following_public_channel
+        self.p7.save()
 
         self.not_following_public_channel.save()
         self.p4.channel = self.not_following_public_channel
@@ -89,7 +98,28 @@ class PostQuerySetTestCase(BaseTestCase):
         self.assertIn(self.p1, viewable)
         self.assertIn(self.p4, viewable)
 
+        self.assertNotIn(self.p7, viewable)
         self.assertNotIn(self.p2, viewable)
+        self.assertNotIn(self.p5, viewable)
+
+    def test_get_for_user_anonymous(self):
+        user = self.user
+        user.id == None
+
+        self.following_public_channel.save()
+        self.p1.channel = self.following_public_channel
+        self.p1.save()
+        self.p7.channel = self.following_public_channel
+        self.p7.save()
+
+        self.not_following_private_channel.save()
+        self.p5.channel = self.not_following_private_channel
+        self.p5.save()
+
+        viewable = Post.objects.get_for_user(user)
+
+        self.assertIn(self.p1, viewable)
+        self.assertNotIn(self.p7, viewable)
         self.assertNotIn(self.p5, viewable)
 
 class ChannelQuerySetTestCase(BaseTestCase):
@@ -154,6 +184,7 @@ class TagQuerySetTestCase(BaseTestCase):
         self.t2.save()
         self.t3.save()
         self.t4.save()
+        self.t5.save()
 
         self.p1.channel = self.c1
         self.p1.save()
@@ -162,6 +193,9 @@ class TagQuerySetTestCase(BaseTestCase):
         self.p6.channel = self.c2
         self.p6.save()
         self.p6.tags.add(self.t2)
+        self.p7.channel = self.c2
+        self.p7.save()
+        self.p7.tags.add(self.t5)
 
         self.p5.channel = self.c3
         self.p5.save()
@@ -177,6 +211,7 @@ class TagQuerySetTestCase(BaseTestCase):
         self.assertIn(self.t2, viewable)
         self.assertIn(self.t4, viewable)
         self.assertNotIn(self.t3, viewable)
+        self.assertNotIn(self.t5, viewable)
 
     def test_get_for_user_anonymous(self):
         user = self.user
@@ -187,20 +222,69 @@ class TagQuerySetTestCase(BaseTestCase):
         self.t1.save()
         self.t2.save()
         self.t3.save()
+        self.t4.save()
 
         self.p1.channel = self.c1
+        self.p7.channel = self.c1
         self.p5.channel = self.c3
 
         self.p1.save()
+        self.p7.save()
         self.p5.save()
 
         self.p1.tags.add(self.t1)
         self.p1.tags.add(self.t2)
         self.p5.tags.add(self.t3)
+        self.p7.tags.add(self.t4)
 
         viewable = Tag.objects.get_for_user(user)
 
         self.assertIn(self.t1, viewable)
         self.assertIn(self.t2, viewable)
 
+        self.assertNotIn(self.t4, viewable)
         self.assertNotIn(self.t3, viewable)
+
+    def test_only_published_posts_shows_up(self):
+        user = self.user
+
+        self.c1.save()
+        self.t1.save()
+        self.t2.save()
+
+        self.p1.channel = self.c1
+        self.p3.channel = self.c1
+
+        self.p1.save()
+        self.p3.save() # Status = DRAFT
+
+        self.p1.tags.add(self.t1)
+        self.p3.tags.add(self.t2)
+
+        viewable = Tag.objects.get_for_user(user)
+
+        self.assertIn(self.t1, viewable)
+        self.assertNotIn(self.t2, viewable)
+
+    def test_tags_only_show_up_if_user_has_access_to_that_Channel(self):
+
+        new_user = User.objects.create_user('new user', 'test_user@example.com', 'new user')
+        self.c1.save()
+        self.c3.save() # user does not have access to this channel
+
+        self.p1.channel = self.c1
+        self.p2.channel = self.c3
+
+        self.p1.save()
+        self.p2.save()
+
+        self.t1.save()
+        self.t2.save() 
+
+        self.p1.tags.add(self.t1)
+        self.p2.tags.add(self.t2)
+
+        viewable = Tag.objects.get_for_user(new_user)
+
+        self.assertIn(self.t1, viewable)
+        self.assertNotIn(self.t2, viewable)

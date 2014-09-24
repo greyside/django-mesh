@@ -106,7 +106,6 @@ class BaseTestCase(TestCase):
             author=self.user,
             slug='tree-falls-forest',
             title='Tree Falls in Forest, No One Notices',
-            published=timezone.now()+timedelta(days=1),
             status=Post.STATUSES.PUBLISHED
         )
 
@@ -141,6 +140,14 @@ class BaseTestCase(TestCase):
             status=Post.STATUSES.PUBLISHED
             )
 
+        self.p7 = Post(
+            author=self.user,
+            slug='tree-falls-forest-active',
+            title='Tree Falls in Forest, No One Notices not active',
+            published=timezone.now()+timedelta(days=1),
+            status=Post.STATUSES.PUBLISHED
+        )
+
         self.t1 = Tag(
             slug='public-1-slug',
             title='public tag 1 title',
@@ -163,6 +170,12 @@ class BaseTestCase(TestCase):
             slug='slug-for-a-tag-4',
             title='title for a tag 4',
             text=' this is tag 4s text',
+        )
+
+        self.t5 = Tag(
+            slug='t5-slug',
+            title='t5 title',
+            text='t5 text',
         )
 
     def tearDown(self):
