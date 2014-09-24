@@ -12,7 +12,7 @@ Another Django blogging engine.
 Depends on
 ----------
 
-* Django 1.6
+* Django 1.7
  * auth, admin, comments
 * django-model-utils
 * python-pytz
