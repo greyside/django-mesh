@@ -21,6 +21,7 @@ from django.db.models.query import QuerySet
 from django.db.models import Q
 
 class PostQuerySet(QuerySet):
+
     def active(self):
         return self.filter(status=self.model.STATUSES.PUBLISHED, published__lt=timezone.now()).distinct()
 
@@ -40,10 +41,9 @@ class ChannelQuerySet(QuerySet):
 class TagQuerySet(QuerySet):
     def get_for_user(self, user):
 
-        for_all_users = Q(post__channel__public=True)
-        for_authorized_user = Q(post__channel__followers=user.id) | for_all_users
+        q_object = Q(post__channel__public=True)
 
-        if user.id == None:
-            return self.filter(for_all_users).distinct()
-        else:
-            return self.filter(for_authorized_user).distinct()
+        if user.id is not None:
+            q_object = Q(post__channel__followers=user.id) | q_object
+
+        return self.filter(q_object).distinct()
