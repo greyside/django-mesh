@@ -646,3 +646,97 @@ class TagDetailViewTestCase(BaseTestCase):
 
         response = self.client.get(reverse('mesh_tag_view', kwargs={'slug':self.t3.slug}))
         self.assertEqual(response.status_code, 404)
+
+class TagIndexViewTestCase(BaseTestCase):
+    def test_only_tags_from_public_posts_show_up_for_logged_out_users(self):
+
+        self.c1.save()
+        self.c3.save()
+        self.t1.save()
+        self.t2.save()
+        self.t3.save()
+
+        self.p1.channel = self.c1
+        self.p4.channel = self.c1
+        self.p5.channel = self.c3
+
+        self.p1.save()
+        self.p4.save()
+        self.p5.save()
+
+        self.p1.tags.add(self.t1)
+        self.p4.tags.add(self.t2)
+        self.p5.tags.add(self.t3)
+
+        response = self.client.get(reverse('mesh_tag_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.t1)
+        self.assertContains(response, self.t2)
+        self.assertNotContains(response, self.t3)
+
+    def test_tags_for_channels_user_is_following_shows_up(self):
+
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+        self.c3.save()
+        self.c3.followers.add(user)
+
+        self.t1.save()
+        self.t2.save()
+        self.t3.save()
+
+        self.p1.channel = self.c1
+        self.p4.channel = self.c1
+        self.p5.channel = self.c3
+
+        self.p1.save()
+        self.p4.save()
+        self.p5.save()
+
+        self.p1.tags.add(self.t1)
+        self.p4.tags.add(self.t2)
+        self.p5.tags.add(self.t3)
+
+        response = self.client.get(reverse('mesh_tag_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.t1)
+        self.assertContains(response, self.t2)
+        self.assertContains(response, self.t3)
+
+    def test_tags_for_channel_logged_in_user_is_not_following_does_not_show_up(self):
+
+        user = self.user
+        self.client.login(username='test_user', password='foobar')
+
+        self.c1.save()
+        self.not_following_private_channel.save()
+
+        self.c3.save()
+        self.c3.followers.add(user)
+
+        self.t1.save()
+        self.t2.save()
+        self.t3.save()
+
+        self.p1.channel = self.c1
+        self.p4.channel = self.not_following_private_channel
+        self.p5.channel = self.c3
+
+        self.p1.save()
+        self.p4.save()
+        self.p5.save()
+
+        self.p1.tags.add(self.t1)
+        self.p4.tags.add(self.t2)
+        self.p5.tags.add(self.t3)
+
+        response = self.client.get(reverse('mesh_tag_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.t1)
+        self.assertNotContains(response, self.t2)
+        self.assertContains(response, self.t3)

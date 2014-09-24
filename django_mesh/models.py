@@ -30,7 +30,7 @@ from django.conf import settings
 from model_utils import Choices
 
 # App imports
-from .managers import PostQuerySet, ChannelQuerySet
+from .managers import PostQuerySet, ChannelQuerySet, TagQuerySet
 
 oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
 
@@ -87,6 +87,8 @@ class Channel(_Abstract):
         ordering = ['title']
 
 class Tag(_Abstract):
+
+    objects = TagQuerySet.as_manager()
 
     def get_absolute_url(self):
         return reverse('mesh_tag_view', args=(self.slug,))

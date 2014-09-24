@@ -159,6 +159,12 @@ class BaseTestCase(TestCase):
             text='this is the text of another tag, t3'
         )
 
+        self.t4 = Tag(
+            slug='slug-for-a-tag-4',
+            title='title for a tag 4',
+            text=' this is tag 4s text',
+        )
+
     def tearDown(self):
         #FIXME: dqc doesn't intercept db destruction or rollback
         cache.clear()
