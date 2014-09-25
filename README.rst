@@ -16,6 +16,11 @@ Depends on
 * auth, admin, comments
 * django-model-utils
 * python-pytz
+* markdown
+* textile
+* oembed
+* pyembed-markdown
+* six
 
 Huboard
 -------

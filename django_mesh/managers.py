@@ -15,10 +15,11 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Django imports
+
 from django.db import models
-from django.utils import timezone
-from django.db.models.query import QuerySet 
 from django.db.models import Q
+from django.db.models.query import QuerySet
+from django.utils import timezone
 
 
 class PostQuerySet(QuerySet):

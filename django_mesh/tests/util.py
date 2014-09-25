@@ -31,9 +31,7 @@ from ..models import Channel, Post, Tag
 
 class BaseTestCase(TestCase):
     def setUp(self):
-        self._old_oembed_regex = models.oembed_regex
-        models.oembed_regex = re.compile(r'^(?P<spacing>\s*)(?P<url>http://.+)', re.MULTILINE)
-        
+
         self.username = 'test_user'
         self.password = 'foobar'
         self.user = User.objects.create_user(self.username, 'test_user@example.com', self.password)
@@ -145,6 +143,17 @@ class BaseTestCase(TestCase):
             slug='tree-falls-forest-active',
             title='Tree Falls in Forest, No One Notices not active',
             published=timezone.now()+timedelta(days=1),
+            text='Lorem Ipsum etc.',
+            text_type=Post.TEXT_TYPE.MARKDOWN,
+            status=Post.STATUSES.PUBLISHED
+        )
+
+        self.p8 = Post(
+            author=self.user,
+            slug='unit-again',
+            title='testing? Learn all about the latest best practice: TDTDD',
+            text='Lorem Ipsum etc.',
+            text_type=Post.TEXT_TYPE.TEXTILE,
             status=Post.STATUSES.PUBLISHED
         )
 
@@ -181,4 +190,3 @@ class BaseTestCase(TestCase):
     def tearDown(self):
         #FIXME: dqc doesn't intercept db destruction or rollback
         cache.clear()
-        models.oembed_regex = self._old_oembed_regex

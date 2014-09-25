@@ -47,9 +47,9 @@ setup(name='django-mesh',
         'django_mesh_test_project',
     ],
     include_package_data=True,
-    install_requires=['Django>=1.7', 'django-model-utils',],
+    install_requires=['Django>=1.7', 'django-model-utils', 'markdown', 'textile', 'oembed', 'pyembed-markdown', 'pyembed', 'requests','six'],
 
-    tests_require=['django-admin-smoke-tests>=0.1.9','django-settings-context-processor',],
+    tests_require=['django-admin-smoke-tests>=0.1.9', 'mock', 'django-settings-context-processor',],
 
     test_suite='setup.runtests',
 )
