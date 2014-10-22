@@ -13,10 +13,9 @@ Depends on
 ----------
 
 * Django 1.7
- * auth, admin, comments
+* auth, admin, comments
 * django-model-utils
 * python-pytz
-
 
 Huboard
 -------
