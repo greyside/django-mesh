@@ -20,7 +20,7 @@ from ..models import Post, Channel, Tag
 # Test imports
 from .util import BaseTestCase
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 class PostQuerySetTestCase(BaseTestCase):
     def test_active(self):
@@ -268,7 +268,8 @@ class TagQuerySetTestCase(BaseTestCase):
 
     def test_tags_only_show_up_if_user_has_access_to_that_Channel(self):
 
-        new_user = User.objects.create_user('new user', 'test_user@example.com', 'new user')
+        new_user = get_user_model()
+        new_user.id = 1
         self.c1.save()
         self.c3.save() # user does not have access to this channel
 

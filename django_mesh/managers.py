@@ -20,6 +20,7 @@ from django.utils import timezone
 from django.db.models.query import QuerySet 
 from django.db.models import Q
 
+
 class PostQuerySet(QuerySet):
 
     def active(self):
@@ -41,7 +42,8 @@ class ChannelQuerySet(QuerySet):
 class TagQuerySet(QuerySet):
     def get_for_user(self, user):
 
-        q_object = Q(post__channel__public=True) & Q(post__status=1)
+        from .models import Post
+        q_object = Q(post__channel__public=True) & Q(post__status=Post.STATUSES.PUBLISHED)
 
         if user.id is not None:
             q_object = Q(post__channel__followers=user.id) | q_object
