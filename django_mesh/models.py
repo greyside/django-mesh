@@ -81,7 +81,7 @@ class Channel(_Abstract):
     objects = ChannelQuerySet.as_manager()
 
     def get_absolute_url(self):
-        return reverse('mesh_channel_view', args=(self.slug,))
+        return reverse('mesh_channel_view', kwargs={'slug': self.slug,})
 
     class Meta:
         ordering = ['title']
@@ -91,7 +91,7 @@ class Tag(_Abstract):
     objects = TagQuerySet.as_manager()
 
     def get_absolute_url(self):
-        return reverse('mesh_tag_view', args=(self.slug,))
+        return reverse('mesh_tag_view', kwargs={'slug': self.slug,})
 
 class Post(_Abstract):
 
@@ -130,7 +130,7 @@ class Post(_Abstract):
     summary = property(_get_summary)
 
     def get_absolute_url(self):
-        return reverse('mesh_post_view', args=(self.slug,))
+        return reverse('mesh_post_view', kwargs={'slug': self.slug,})
 
     class Meta:
         ordering = ['published']
