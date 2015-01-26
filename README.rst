@@ -2,10 +2,10 @@
 django-mesh
 ===========
 
-.. image:: https://travis-ci.org/SeanHayes/django-mesh.svg?branch=master
-    :target: https://travis-ci.org/SeanHayes/django-mesh
-.. image:: https://coveralls.io/repos/SeanHayes/django-mesh/badge.png?branch=master
-    :target: https://coveralls.io/r/SeanHayes/django-mesh?branch=master
+.. image:: https://travis-ci.org/greyside/django-mesh.svg?branch=master
+    :target: https://travis-ci.org/greyside/django-mesh
+.. image:: https://coveralls.io/repos/greyside/django-mesh/badge.png?branch=master
+    :target: https://coveralls.io/r/greyside/django-mesh?branch=master
 
 Another Django blogging engine.
 
@@ -21,4 +21,4 @@ Depends on
 Huboard
 -------
 
-https://huboard.com/SeanHayes/django-mesh/
+https://huboard.com/greyside/django-mesh/
