@@ -36,8 +36,8 @@ class IndexViewTestCase(BaseTestCase):
         self.c1.save()
         self.p1.channel = self.c1
         self.p1.save()
-        self.p2.channel = self.c1
-        self.p2.save()
+        self.p7.channel = self.c1
+        self.p7.save()
         self.p3.channel = self.c1
         self.p3.save()
 
@@ -45,7 +45,7 @@ class IndexViewTestCase(BaseTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
-        self.assertNotContains(response, self.p2.title)
+        self.assertNotContains(response, self.p7.title)
         self.assertNotContains(response, self.p3.title)
 
     def test_what_posts_user_sees_when_logged_in(self):
@@ -246,8 +246,8 @@ class ChannelDetailViewTestCase(BaseTestCase):
         self.c1.save()
         self.p1.channel = self.c1
         self.p1.save()
-        self.p2.channel = self.c1
-        self.p2.save()
+        self.p7.channel = self.c1
+        self.p7.save()
         self.p3.channel = self.c1
         self.p3.save()
 
@@ -256,7 +256,7 @@ class ChannelDetailViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
 
-        self.assertNotContains(response, self.p2.title)
+        self.assertNotContains(response, self.p7.title)
         self.assertNotContains(response, self.p3.title)
 
     def test_available_post_for_logged_in_user(self):
@@ -340,8 +340,8 @@ class PostIndexViewTestCase(BaseTestCase):
         self.c1.save()
         self.p1.channel = self.c1
         self.p1.save()
-        self.p2.channel = self.c1
-        self.p2.save()
+        self.p7.channel = self.c1
+        self.p7.save()
         self.p3.channel = self.c1
         self.p3.save()
 
@@ -350,7 +350,7 @@ class PostIndexViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.p1.title)
 
-        self.assertNotContains(response, self.p2.title)
+        self.assertNotContains(response, self.p7.title)
         self.assertNotContains(response, self.p3.title)
 
     def test_what_logged_in_users_can_see(self):
@@ -648,6 +648,27 @@ class TagDetailViewTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 404)
 
 class TagIndexViewTestCase(BaseTestCase):
+    def test_only_tags_from_active_posts_show_up_on_index_page(self):
+
+        self.c1.save()
+        self.t1.save()
+        self.t2.save()
+
+        self.p1.channel = self.c1
+        self.p7.channel = self.c1
+
+        self.p1.save()
+        self.p7.save()
+
+        self.p1.tags.add(self.t1)
+        self.p7.tags.add(self.t2)
+
+        response = self.client.get(reverse('mesh_tag_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.t1)
+        self.assertNotContains(response, self.t2)
+
     def test_only_tags_from_public_posts_show_up_for_logged_out_users(self):
 
         self.c1.save()
