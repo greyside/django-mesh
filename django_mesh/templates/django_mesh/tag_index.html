@@ -2,17 +2,40 @@
 {% block content %}
 
 <div class="tag_list">
-{% if tag_list %}
+    {% if tag_list %}
 
-    {% for tag in tag_list %}
-        <div>
-            <a href="{% url 'mesh_tag_view' slug=tag.slug %}">{{ tag.title }}</a>
-        </div>
-    {% endfor %}
+        {% for tag in tag_list %}
 
-{% else %}
-    There are no tags to display.
-{% endif %}
+            <div id="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                            <div class="tag-preview">
+
+                                <a href="{% url 'mesh_tag_view' slug=tag.slug %}">
+                                    <h2 class="tag-title">
+                                        {{ tag.title }}
+                                    </h2>
+                                    <h3 class="tag-subtitle">
+                                        {{ tag.summary }}
+                                    </h3>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        {% endfor %}
+        <hr>
+                <ul class="pager">
+                    <li class="next">
+                        {% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
+                    </li>
+                </ul>
+
+    {% else %}
+        There are no tag to display.
+    {% endif %}
 </div>
-
 {% endblock content %}

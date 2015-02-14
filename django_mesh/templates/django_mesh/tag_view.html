@@ -1,22 +1,47 @@
 {% extends "django_mesh/base.html" %}
 {% block content %}
 
-{{ tag.title }}
-<br><br>
+        <ul class="list-inline text-center">
+            {{ tag.title }}
+        </ul>
 
-<div class="post_list">
-{% if post_list %}
-    {% for post in post_list %}
-        <div>
-            <a href="{% url 'mesh_post_view' slug=post.slug %}">{{ post.title }}</a>
-            <p class="summary">{{ post.summary }}</p>
-        </div>
-    {% endfor %}
-    {% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
 
-{% else %}
-        There are no posts to display.
-{% endif %}
-</div>
+    <div class="post_list">
+        {% if post_list %}
+
+            {% for post in post_list %}
+
+                <div id="content">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                                <div class="post-preview">
+
+                                    <a href="{% url 'mesh_post_view' slug=post.slug %}">
+                                        <h2 class="post-title">
+                                            {{ post.title }}
+                                        </h2>
+                                        <h3 class="post-subtitle">
+                                            {{ post.summary }}
+                                        </h3>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            {% endfor %}
+            <hr>
+                    <ul class="pager">
+                        <li class="next">
+                            {% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
+                        </li>
+                    </ul>
+
+        {% else %}
+            There are no post to display.
+        {% endif %}
+    </div>
 
 {% endblock content %}
