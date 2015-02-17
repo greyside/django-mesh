@@ -1,22 +1,42 @@
 {% extends "django_mesh/base.html" %}
 {% block content %}
 
-<h2>{{ post.title }}</h2>
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-<div class="post">
-    {{ post.rendered_text }}
-</div>
+                    <h2>{{ post.title }}</h2>
+
+                    {{ post.rendered_text }} 
+                </div>
+            </div>
+        </div>
+    </article>
+
+<hr>
 
 <div class="tag_list">
 
 {% if post.tags.all %}
 
     <ul>
-        {% for tag in post.tags.all %}
-            <li>
-                <a href="{% url 'mesh_tag_view' slug=tag.slug %}">{{ tag.title }}</a>
-            </li>
-        {% endfor %}
+            <div id="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                            <div class="tag-preview">
+                                {% for tag in post.tags.all %}
+                                    <li>
+                                        <a href="{% url 'mesh_tag_view' slug=tag.slug %}">{{ tag.title }}</a>
+                                    </li>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </ul>
 
 {% else %}

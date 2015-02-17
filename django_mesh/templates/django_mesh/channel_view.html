@@ -1,32 +1,55 @@
 {% extends "django_mesh/base.html" %}
 {% block content %}
 
-<div class="post_list">
-{% if post_list %}
+    <div class="post_list">
+        {% if post_list %}
 
-    {% for post in post_list %}
-        <div>
-            <a href="{% url 'mesh_post_view' slug=post.slug %}">{{ post.title }}</a>
-            <p class="summary">{{ post.summary }}</p>
-        </div>
-    {% endfor %}
-    {% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
+            {% for post in post_list %}
 
-{% else %}
-        There are no posts to display.
-{% endif %}
+                <div id="content">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                                <div class="post-preview">
 
-</div>
+                                    <a href="{% url 'mesh_post_view' slug=post.slug %}">
+                                        <h2 class="post-title">
+                                            {{ post.title }}
+                                        </h2>
+                                        <h3 class="post-subtitle">
+                                            {{ post.summary }}
+                                        </h3>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            {% endfor %}
+            <hr>
+                    <ul class="pager">
+                        <li class="next">
+                            {% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
+                        </li>
+                    </ul>
 
-{% if request.user.is_authenticated %} 
-    {% if request.user not in channel.followers.all %}
-        <div class="channel">
-            {% include 'django_mesh/follow_channel.html' %}
-        </div>
+        {% else %}
+            There are no posts to display.
+        {% endif %}
+    </div>
+
+    {% if request.user.is_authenticated %} 
+        {% if request.user not in channel.followers.all %}
+            <div class="channel">
+                {% include 'django_mesh/follow_channel.html' %}
+            </div>
+        {% endif %}
+
+    {% else %}
+        <ul class="list-inline text-center">
+            Please log in to follow this Channel
+        </ul>
     {% endif %}
-
-{% else %}
-    Please log in to follow this Channel
-{% endif %}
 
 {% endblock content %}
