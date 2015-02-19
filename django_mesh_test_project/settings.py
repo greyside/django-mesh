@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     #app that we want to test
     'django_mesh',
+    'settings_context_processor',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -105,7 +106,9 @@ TEMPLATE_DIRS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
+    'settings_context_processor.context_processors.settings',
 )
+
 
 # weaker password hashing allows for faster tests
 PASSWORD_HASHERS = (
@@ -115,4 +118,9 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.BCryptPasswordHasher',
     'django.contrib.auth.hashers.SHA1PasswordHasher',
     'django.contrib.auth.hashers.MD5PasswordHasher',
+)
+
+DISQUS_SHORTNAME = 'djangomeshtestproject'
+TEMPLATE_VISIBLE_SETTINGS = (
+    'DISQUS_SHORTNAME',
 )

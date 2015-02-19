@@ -3,11 +3,9 @@
 	{%load static%}
 
 <html xmlns="http://www.w3.org/1999/xhtml"  xmlns:og="http://opengraphprotocol.org/schema/" xmlns:fb="http://www.facebook.com/2008/fbml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-
-
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="">
@@ -31,13 +29,6 @@
 		<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 		<link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-
-		<!-- JS -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
-		<script src="{% static 'js/jquery.js' %}"></script>
-		<script src="{% static 'js/bootstrap.min.js' %}"></script>
-		<script src="{% static 'js/clean-blog.min.js' %}"></script>
 
 	</head>
 
@@ -103,7 +94,7 @@
 
             {% block content %}
 			{% endblock content %}
-
+		{% block comment %}{% endblock comment %}
 			</div>
 
 			<div id="footer">
@@ -146,6 +137,14 @@
 			{% block footer %}{% endblock footer %}
 			</div>
 		</div>
+	{% endblock body %}
 
-	{% endblock body %}</body>
+		<!-- JS -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+		<script src="{% static 'js/jquery.js' %}"></script>
+		<script src="{% static 'js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'js/clean-blog.min.js' %}"></script>
+
+	</body>
 </html>
