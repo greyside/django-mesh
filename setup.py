@@ -5,6 +5,7 @@ from setuptools import setup
 import django_mesh
 
 package_name = 'django_mesh'
+test_package_name = '%s_test_project' % package_name
 
 def runtests():
     import os
@@ -13,9 +14,8 @@ def runtests():
     import django
     from django.core.management import call_command
     
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'django_mesh_test_project.settings'
-    if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
-        django.setup()
+    os.environ['DJANGO_SETTINGS_MODULE'] = '%s.settings' % test_package_name
+    django.setup()
     call_command('test', 'django_admin_smoke_tests')
     call_command('test')
     sys.exit()
@@ -43,8 +43,8 @@ setup(name='django-mesh',
     download_url='https://github.com/SeanHayes/django-mesh',
     license='GPL',
     packages=[
-        'django_mesh',
-        'django_mesh_test_project',
+        package_name,
+        test_package_name,
     ],
     include_package_data=True,
     install_requires=['Django>=1.7', 'django-model-utils', 'markdown', 'textile', 'oembed', 'pyembed-markdown', 'pyembed', 'requests','six'],
