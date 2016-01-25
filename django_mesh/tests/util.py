@@ -20,7 +20,7 @@ import re
 
 #Django imports
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.utils import timezone
@@ -28,6 +28,10 @@ from django.utils import timezone
 #App imports
 from .. import models
 from ..models import Channel, Post, Tag
+
+
+User = get_user_model()
+
 
 class BaseTestCase(TestCase):
     def setUp(self):
