@@ -73,7 +73,7 @@ class _Abstract(models.Model):     #microblog compatible.
             self.rendered_text = textile.textile(self.text)
 
 
-        soup = BeautifulSoup(self.rendered_text)
+        soup = BeautifulSoup(self.rendered_text, 'html.parser')
 
         matching_text_nodes = soup.find_all(text = re.compile(URL_REGEX)) 
 
@@ -97,7 +97,7 @@ class _Abstract(models.Model):     #microblog compatible.
             else:
                 matching_text_node.replace_with(plain_text)
 
-        soup = BeautifulSoup(soup.encode(formatter=None))
+        soup = BeautifulSoup(soup.encode(formatter=None), 'html.parser')
 
         self.rendered_text = soup.encode(formatter=None).decode()
 
