@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup
+from setuptools import setup, find_packages
 import django_mesh
 
 package_name = 'django_mesh'
@@ -42,10 +42,7 @@ setup(name='django-mesh',
     url='http://seanhayes.name/',
     download_url='https://github.com/SeanHayes/django-mesh',
     license='GPL',
-    packages=[
-        package_name,
-        test_package_name,
-    ],
+    packages=find_packages(exclude=[test_package_name]),
     include_package_data=True,
     install_requires=['Django>=1.7', 'django-model-utils', 'markdown', 'textile', 'oembed', 'pyembed-markdown', 'pyembed', 'requests','six'],
 
